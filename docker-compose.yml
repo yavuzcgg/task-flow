@@ -1,0 +1,44 @@
+# Docker Compose - TaskFlow Development Environment
+# Kullanım: docker compose up -d
+# Durdurma: docker compose down
+# Verileri silip yeniden başlatma: docker compose down -v
+
+services:
+  # PostgreSQL Veritabanı
+  taskflow-db:
+    image: postgres:16-alpine     # Alpine = küçük boyutlu image
+    container_name: taskflow-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"               # Host:Container port mapping
+    environment:
+      POSTGRES_DB: taskflow       # Otomatik oluşturulacak database adı
+      POSTGRES_USER: taskflow_user
+      POSTGRES_PASSWORD: taskflow_dev_123  # Sadece development için!
+    volumes:
+      - taskflow-db-data:/var/lib/postgresql/data  # Veri kalıcılığı (named volume)
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskflow_user -d taskflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # pgAdmin - Veritabanı yönetim arayüzü (http://localhost:5050)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: taskflow-pgadmin
+    restart: unless-stopped
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@taskflow.dev
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      taskflow-db:
+        condition: service_healthy  # DB hazır olana kadar bekle
+
+volumes:
+  taskflow-db-data:    # PostgreSQL verileri burada saklanır
+  pgadmin-data:        # pgAdmin ayarları burada saklanır
