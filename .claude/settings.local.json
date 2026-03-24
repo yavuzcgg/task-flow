@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(gh auth:*)"
+      "Bash(gh auth:*)",
+      "Bash(gh repo:*)",
+      "Bash(find /c/Users/User/Desktop/Repos/TaskFlow/frontend -type f -not -path */node_modules/* -not -path */.git/*)"
     ]
   }
 }
