@@ -13,6 +13,6 @@ public class User : BaseEntity
     // Navigation Properties
     public ICollection<Project> OwnedProjects { get; set; } = new List<Project>();
     public ICollection<TaskItem> AssignedTasks { get; set; } = new List<TaskItem>();
-    public ICollection<TaskItem> CreatedTasks { get; set; } = new List<TaskItem>();
+    public ICollection<TaskItem> CreatedTasks { get; set; } = new List<TaskItem>(); // TaskItem.Creator ile eşleşir
     public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 }

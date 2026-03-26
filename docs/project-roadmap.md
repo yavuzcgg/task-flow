@@ -6,20 +6,22 @@
 ---
 
 ## Faz 1: Domain Katmanı (Temel Entity'ler)
-- [x] BaseEntity oluştur (Id, CreatedAt, UpdatedAt)
+- [x] BaseEntity oluştur (Id, CreatedAt, UpdatedAt, audit trail, soft delete/disable)
 - [x] Enum'lar: TaskItemStatus, TaskPriority, UserRole
-- [ ] User entity
-- [ ] Project entity
-- [ ] TaskItem entity
-- [ ] Comment entity
+- [x] User entity (FullName, Email, PasswordHash, Role, ProfileImageUrl)
+- [x] Project entity (Name, Description, IsPublic, OwnerId)
+- [x] TaskItem entity (Title, Description, Status, Priority, DueDate, ProjectId, AssigneeId, CreatedById)
+- [x] Comment entity (Content, TaskItemId, AuthorId)
 - [ ] Domain validation rules
 
 ## Faz 2: Infrastructure - Veritabanı Kurulumu
 - [x] Docker Compose (PostgreSQL + pgAdmin)
-- [ ] EF Core NuGet paketlerini ekle
-- [ ] AppDbContext oluştur
-- [ ] Entity Configuration'lar (Fluent API)
-- [ ] Initial Migration oluştur ve uygula
+- [x] EF Core + Npgsql NuGet paketleri (9.0.x)
+- [x] AppDbContext (global query filter, otomatik timestamp)
+- [x] Entity Configuration'lar (Fluent API) — User, Project, TaskItem, Comment
+- [x] Initial Migration (InitialCreate)
+- [x] Infrastructure DI extension method (AddInfrastructure)
+- [ ] Migration'ı veritabanına uygula (docker gerekli)
 - [ ] GenericRepository implementasyonu
 - [ ] UnitOfWork implementasyonu
 - [ ] Seed Data (varsayılan roller, test verisi)

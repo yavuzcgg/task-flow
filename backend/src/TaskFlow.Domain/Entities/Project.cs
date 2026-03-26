@@ -4,6 +4,7 @@ public class Project : BaseEntity
 {
     public required string Name { get; set; }
     public string? Description { get; set; }
+    public bool IsPublic { get; set; } = true;
 
     // Foreign Key
     public Guid OwnerId { get; set; }

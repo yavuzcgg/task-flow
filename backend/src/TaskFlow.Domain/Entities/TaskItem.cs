@@ -18,6 +18,6 @@ public class TaskItem : BaseEntity
     // Navigation Properties
     public Project Project { get; set; } = null!;
     public User? Assignee { get; set; }
-    public User CreatedBy { get; set; } = null!;
+    public User Creator { get; set; } = null!;
     public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 }
