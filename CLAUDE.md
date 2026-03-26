@@ -147,3 +147,9 @@ docker-compose down                 # Servisleri durdur
 - **Ne Oldu:** `dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL` en son 10.x'i çekti, .NET 9 ile uyumsuz (net10.0 gerektiriyor)
 - **Ne Öğrendim:** .NET 9 projelerinde `--version 9.0.*` ile major version'ı sabitle. Her zaman framework version = paket major version
 - **Tarih:** 2026-03-26
+
+#### [2026-03-26] pgAdmin'de PostgreSQL host adı: localhost kullan
+- **Konu:** Docker pgAdmin bağlantı sorunu
+- **Ne Oldu:** pgAdmin Register Server'da host olarak `taskflow-db` (container adı) yazıldı ama bağlanamadı. pgAdmin Docker içinde çalışsa bile, port 5432 host'a map'lendiği için `localhost` kullanmak gerekiyor
+- **Ne Öğrendim:** Docker Compose'da port mapping varsa (`5432:5432`), pgAdmin dahil tüm araçlardan `localhost` ile bağlan
+- **Tarih:** 2026-03-26

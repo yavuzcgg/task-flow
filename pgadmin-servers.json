@@ -1,0 +1,13 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "TaskFlow",
+      "Group": "Servers",
+      "Host": "taskflow-db",
+      "Port": 5432,
+      "MaintenanceDB": "taskflow",
+      "Username": "taskflow_user",
+      "SSLMode": "prefer"
+    }
+  }
+}
