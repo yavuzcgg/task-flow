@@ -68,6 +68,9 @@ public static class ServiceCollectionExtensions
         // Application Services
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IProjectService, ProjectService>();
+        services.AddScoped<ITaskService, TaskService>();
+        services.AddScoped<ICommentService, CommentService>();
 
         return services;
     }
