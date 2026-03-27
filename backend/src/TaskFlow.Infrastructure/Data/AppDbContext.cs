@@ -1,15 +1,16 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TaskFlow.Domain.Entities;
 
 namespace TaskFlow.Infrastructure.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
 
-    public DbSet<User> Users => Set<User>();
     public DbSet<Project> Projects => Set<Project>();
     public DbSet<TaskItem> TaskItems => Set<TaskItem>();
     public DbSet<Comment> Comments => Set<Comment>();
@@ -18,10 +19,9 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Tüm configuration'ları bu assembly'den otomatik yükle
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
-        // Global query filter: soft delete edilmiş kayıtları otomatik filtrele
+        // Global query filter: soft delete
         modelBuilder.Entity<User>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<Project>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<TaskItem>().HasQueryFilter(e => !e.IsDeleted);
@@ -30,17 +30,20 @@ public class AppDbContext : DbContext
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
+        var now = DateTime.UtcNow;
+
+        // BaseEntity türevleri (Project, TaskItem, Comment)
         foreach (var entry in ChangeTracker.Entries<BaseEntity>())
         {
-            switch (entry.State)
-            {
-                case EntityState.Added:
-                    entry.Entity.CreatedAt = DateTime.UtcNow;
-                    break;
-                case EntityState.Modified:
-                    entry.Entity.UpdatedAt = DateTime.UtcNow;
-                    break;
-            }
+            if (entry.State == EntityState.Added) entry.Entity.CreatedAt = now;
+            if (entry.State == EntityState.Modified) entry.Entity.UpdatedAt = now;
+        }
+
+        // User artık BaseEntity değil, ayrı handle et
+        foreach (var entry in ChangeTracker.Entries<User>())
+        {
+            if (entry.State == EntityState.Added) entry.Entity.CreatedAt = now;
+            if (entry.State == EntityState.Modified) entry.Entity.UpdatedAt = now;
         }
 
         return base.SaveChangesAsync(cancellationToken);
