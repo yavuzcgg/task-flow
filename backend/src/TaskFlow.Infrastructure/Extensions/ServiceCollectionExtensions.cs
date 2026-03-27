@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using TaskFlow.Application.Interfaces;
 using TaskFlow.Domain.Entities;
 using TaskFlow.Infrastructure.Data;
+using TaskFlow.Infrastructure.Repositories;
 using TaskFlow.Infrastructure.Services;
 
 namespace TaskFlow.Infrastructure.Extensions;
@@ -59,6 +60,10 @@ public static class ServiceCollectionExtensions
                 ClockSkew = TimeSpan.Zero
             };
         });
+
+        // Repositories
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Application Services
         services.AddScoped<ITokenService, TokenService>();
