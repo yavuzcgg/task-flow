@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TaskFlow.Application.DTOs.Common;
 using TaskFlow.Application.DTOs.TaskItem;
 using TaskFlow.Application.Exceptions;
 using TaskFlow.Application.Interfaces;
@@ -16,13 +17,39 @@ public class TaskService : ITaskService
         _context = context;
     }
 
-    public async Task<IEnumerable<TaskResponse>> GetByProjectAsync(Guid projectId)
+    public async Task<PagedResult<TaskResponse>> GetByProjectAsync(Guid projectId, TaskFilterParams filter)
     {
-        return await _context.TaskItems
+        var query = _context.TaskItems
             .Where(t => t.ProjectId == projectId)
-            .OrderByDescending(t => t.CreatedAt)
+            .AsQueryable();
+
+        // Filtreler
+        if (filter.Status.HasValue)
+            query = query.Where(t => t.Status == filter.Status.Value);
+
+        if (filter.Priority.HasValue)
+            query = query.Where(t => t.Priority == filter.Priority.Value);
+
+        if (!string.IsNullOrWhiteSpace(filter.Search))
+            query = query.Where(t => t.Title.Contains(filter.Search));
+
+        query = query.OrderByDescending(t => t.CreatedAt);
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .Skip((filter.Page - 1) * filter.PageSize)
+            .Take(filter.PageSize)
             .Select(t => MapToResponse(t))
             .ToListAsync();
+
+        return new PagedResult<TaskResponse>
+        {
+            Items = items,
+            CurrentPage = filter.Page,
+            PageSize = filter.PageSize,
+            TotalCount = totalCount
+        };
     }
 
     public async Task<TaskResponse> GetByIdAsync(Guid id)

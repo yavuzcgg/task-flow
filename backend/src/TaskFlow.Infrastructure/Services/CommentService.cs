@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TaskFlow.Application.DTOs.Comment;
+using TaskFlow.Application.DTOs.Common;
 using TaskFlow.Application.Exceptions;
 using TaskFlow.Application.Interfaces;
 using TaskFlow.Domain.Entities;
@@ -17,13 +18,27 @@ public class CommentService : ICommentService
         _context = context;
     }
 
-    public async Task<IEnumerable<CommentResponse>> GetByTaskAsync(Guid taskItemId)
+    public async Task<PagedResult<CommentResponse>> GetByTaskAsync(Guid taskItemId, PaginationParams pagination)
     {
-        return await _context.Comments
+        var query = _context.Comments
             .Where(c => c.TaskItemId == taskItemId)
-            .OrderBy(c => c.CreatedAt)
+            .OrderBy(c => c.CreatedAt);
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .Skip((pagination.Page - 1) * pagination.PageSize)
+            .Take(pagination.PageSize)
             .Select(c => MapToResponse(c))
             .ToListAsync();
+
+        return new PagedResult<CommentResponse>
+        {
+            Items = items,
+            CurrentPage = pagination.Page,
+            PageSize = pagination.PageSize,
+            TotalCount = totalCount
+        };
     }
 
     public async Task<CommentResponse> CreateAsync(Guid taskItemId, CreateCommentRequest request, Guid userId)

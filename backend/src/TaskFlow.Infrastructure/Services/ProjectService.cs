@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TaskFlow.Application.DTOs.Common;
 using TaskFlow.Application.DTOs.Project;
 using TaskFlow.Application.Exceptions;
 using TaskFlow.Application.Interfaces;
@@ -17,13 +18,27 @@ public class ProjectService : IProjectService
         _context = context;
     }
 
-    public async Task<IEnumerable<ProjectResponse>> GetAllByUserAsync(Guid userId)
+    public async Task<PagedResult<ProjectResponse>> GetAllByUserAsync(Guid userId, PaginationParams pagination)
     {
-        return await _context.Projects
+        var query = _context.Projects
             .Where(p => p.OwnerId == userId)
-            .OrderByDescending(p => p.CreatedAt)
+            .OrderByDescending(p => p.CreatedAt);
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .Skip((pagination.Page - 1) * pagination.PageSize)
+            .Take(pagination.PageSize)
             .Select(p => MapToResponse(p))
             .ToListAsync();
+
+        return new PagedResult<ProjectResponse>
+        {
+            Items = items,
+            CurrentPage = pagination.Page,
+            PageSize = pagination.PageSize,
+            TotalCount = totalCount
+        };
     }
 
     public async Task<ProjectResponse> GetByIdAsync(Guid id)

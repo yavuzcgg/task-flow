@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TaskFlow.Application.DTOs.Common;
 using TaskFlow.Application.DTOs.Project;
 using TaskFlow.Application.Interfaces;
 using TaskFlow.Domain.Enums;
@@ -21,11 +22,11 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<ProjectResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAll()
+    [ProducesResponseType(typeof(PagedResult<ProjectResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAll([FromQuery] PaginationParams pagination)
     {
         var userId = GetCurrentUserId();
-        var projects = await _projectService.GetAllByUserAsync(userId);
+        var projects = await _projectService.GetAllByUserAsync(userId, pagination);
         return Ok(projects);
     }
 

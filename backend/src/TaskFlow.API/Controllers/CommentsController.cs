@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskFlow.Application.DTOs.Comment;
+using TaskFlow.Application.DTOs.Common;
 using TaskFlow.Application.Interfaces;
 using TaskFlow.Domain.Enums;
 
@@ -20,10 +21,10 @@ public class CommentsController : ControllerBase
     }
 
     [HttpGet("api/v1/tasks/{taskId:guid}/comments")]
-    [ProducesResponseType(typeof(IEnumerable<CommentResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetByTask(Guid taskId)
+    [ProducesResponseType(typeof(PagedResult<CommentResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetByTask(Guid taskId, [FromQuery] PaginationParams pagination)
     {
-        var comments = await _commentService.GetByTaskAsync(taskId);
+        var comments = await _commentService.GetByTaskAsync(taskId, pagination);
         return Ok(comments);
     }
 

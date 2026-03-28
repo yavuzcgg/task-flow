@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TaskFlow.Application.DTOs.Common;
 using TaskFlow.Application.DTOs.TaskItem;
 using TaskFlow.Application.Interfaces;
 using TaskFlow.Domain.Enums;
@@ -20,10 +21,10 @@ public class TasksController : ControllerBase
     }
 
     [HttpGet("api/v1/projects/{projectId:guid}/tasks")]
-    [ProducesResponseType(typeof(IEnumerable<TaskResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetByProject(Guid projectId)
+    [ProducesResponseType(typeof(PagedResult<TaskResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetByProject(Guid projectId, [FromQuery] TaskFilterParams filter)
     {
-        var tasks = await _taskService.GetByProjectAsync(projectId);
+        var tasks = await _taskService.GetByProjectAsync(projectId, filter);
         return Ok(tasks);
     }
 
