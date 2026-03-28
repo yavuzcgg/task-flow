@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskFlow.Application.DTOs.TaskItem;
 using TaskFlow.Application.Interfaces;
+using TaskFlow.Domain.Enums;
 
 namespace TaskFlow.API.Controllers;
 
@@ -63,7 +64,7 @@ public class TasksController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        await _taskService.DeleteAsync(id);
+        await _taskService.DeleteAsync(id, GetCurrentUserId(), GetCurrentUserRole());
         return NoContent();
     }
 
@@ -72,5 +73,11 @@ public class TasksController : ControllerBase
         var userIdClaim = User.FindFirst(JwtRegisteredClaimNames.Sub)
                        ?? User.FindFirst(ClaimTypes.NameIdentifier);
         return Guid.Parse(userIdClaim!.Value);
+    }
+
+    private UserRole GetCurrentUserRole()
+    {
+        var roleClaim = User.FindFirst(ClaimTypes.Role);
+        return Enum.Parse<UserRole>(roleClaim?.Value ?? "Developer");
     }
 }

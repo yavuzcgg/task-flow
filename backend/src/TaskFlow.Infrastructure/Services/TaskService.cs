@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TaskFlow.Application.DTOs.TaskItem;
 using TaskFlow.Application.Exceptions;
 using TaskFlow.Application.Interfaces;
+using TaskFlow.Domain.Enums;
 using TaskFlow.Infrastructure.Data;
 
 namespace TaskFlow.Infrastructure.Services;
@@ -80,10 +81,13 @@ public class TaskService : ITaskService
         return MapToResponse(task);
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id, Guid userId, UserRole userRole)
     {
         var task = await _context.TaskItems.FindAsync(id);
         if (task == null) throw new NotFoundException("Görev bulunamadı.");
+
+        if (task.CreatedById != userId && userRole != UserRole.Admin)
+            throw new UnauthorizedException("Bu görevi silme yetkiniz yok.");
 
         task.IsDeleted = true;
         task.DeletedAt = DateTime.UtcNow;

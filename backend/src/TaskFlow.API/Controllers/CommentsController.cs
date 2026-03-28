@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskFlow.Application.DTOs.Comment;
 using TaskFlow.Application.Interfaces;
+using TaskFlow.Domain.Enums;
 
 namespace TaskFlow.API.Controllers;
 
@@ -39,7 +40,7 @@ public class CommentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        await _commentService.DeleteAsync(id);
+        await _commentService.DeleteAsync(id, GetCurrentUserId(), GetCurrentUserRole());
         return NoContent();
     }
 
@@ -48,5 +49,11 @@ public class CommentsController : ControllerBase
         var userIdClaim = User.FindFirst(JwtRegisteredClaimNames.Sub)
                        ?? User.FindFirst(ClaimTypes.NameIdentifier);
         return Guid.Parse(userIdClaim!.Value);
+    }
+
+    private UserRole GetCurrentUserRole()
+    {
+        var roleClaim = User.FindFirst(ClaimTypes.Role);
+        return Enum.Parse<UserRole>(roleClaim?.Value ?? "Developer");
     }
 }

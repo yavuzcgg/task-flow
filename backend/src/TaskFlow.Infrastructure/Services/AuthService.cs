@@ -30,7 +30,8 @@ public class AuthService : IAuthService
         {
             FullName = request.FullName,
             Email = request.Email,
-            UserName = request.Email
+            UserName = request.Email,
+            Role = request.Role
         };
 
         var result = await _userManager.CreateAsync(user, request.Password);

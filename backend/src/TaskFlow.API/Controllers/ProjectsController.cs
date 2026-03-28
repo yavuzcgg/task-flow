@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskFlow.Application.DTOs.Project;
 using TaskFlow.Application.Interfaces;
+using TaskFlow.Domain.Enums;
 
 namespace TaskFlow.API.Controllers;
 
@@ -49,7 +50,7 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProjectRequest request)
     {
-        var project = await _projectService.UpdateAsync(id, request);
+        var project = await _projectService.UpdateAsync(id, request, GetCurrentUserId(), GetCurrentUserRole());
         return Ok(project);
     }
 
@@ -57,7 +58,7 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        await _projectService.DeleteAsync(id);
+        await _projectService.DeleteAsync(id, GetCurrentUserId(), GetCurrentUserRole());
         return NoContent();
     }
 
@@ -66,5 +67,11 @@ public class ProjectsController : ControllerBase
         var userIdClaim = User.FindFirst(JwtRegisteredClaimNames.Sub)
                        ?? User.FindFirst(ClaimTypes.NameIdentifier);
         return Guid.Parse(userIdClaim!.Value);
+    }
+
+    private UserRole GetCurrentUserRole()
+    {
+        var roleClaim = User.FindFirst(ClaimTypes.Role);
+        return Enum.Parse<UserRole>(roleClaim?.Value ?? "Developer");
     }
 }

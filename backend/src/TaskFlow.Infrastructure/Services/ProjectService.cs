@@ -3,6 +3,7 @@ using TaskFlow.Application.DTOs.Project;
 using TaskFlow.Application.Exceptions;
 using TaskFlow.Application.Interfaces;
 using TaskFlow.Domain.Entities;
+using TaskFlow.Domain.Enums;
 using TaskFlow.Infrastructure.Data;
 
 namespace TaskFlow.Infrastructure.Services;
@@ -49,24 +50,31 @@ public class ProjectService : IProjectService
         return MapToResponse(project);
     }
 
-    public async Task<ProjectResponse> UpdateAsync(Guid id, UpdateProjectRequest request)
+    public async Task<ProjectResponse> UpdateAsync(Guid id, UpdateProjectRequest request, Guid userId, UserRole userRole)
     {
         var project = await _context.Projects.FindAsync(id);
         if (project == null) throw new NotFoundException("Proje bulunamadı.");
 
+        if (project.OwnerId != userId && userRole != UserRole.Admin)
+            throw new UnauthorizedException("Bu projeyi güncelleme yetkiniz yok.");
+
         project.Name = request.Name;
         project.Description = request.Description;
         project.IsPublic = request.IsPublic;
+        project.UpdatedBy = userId;
 
         await _context.SaveChangesAsync();
 
         return MapToResponse(project);
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id, Guid userId, UserRole userRole)
     {
         var project = await _context.Projects.FindAsync(id);
         if (project == null) throw new NotFoundException("Proje bulunamadı.");
+
+        if (project.OwnerId != userId && userRole != UserRole.Admin)
+            throw new UnauthorizedException("Bu projeyi silme yetkiniz yok.");
 
         project.IsDeleted = true;
         project.DeletedAt = DateTime.UtcNow;

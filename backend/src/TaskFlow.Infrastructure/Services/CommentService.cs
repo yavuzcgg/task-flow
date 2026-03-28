@@ -3,6 +3,7 @@ using TaskFlow.Application.DTOs.Comment;
 using TaskFlow.Application.Exceptions;
 using TaskFlow.Application.Interfaces;
 using TaskFlow.Domain.Entities;
+using TaskFlow.Domain.Enums;
 using TaskFlow.Infrastructure.Data;
 
 namespace TaskFlow.Infrastructure.Services;
@@ -41,10 +42,13 @@ public class CommentService : ICommentService
         return MapToResponse(comment);
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id, Guid userId, UserRole userRole)
     {
         var comment = await _context.Comments.FindAsync(id);
         if (comment == null) throw new NotFoundException("Yorum bulunamadı.");
+
+        if (comment.AuthorId != userId && userRole != UserRole.Admin)
+            throw new UnauthorizedException("Bu yorumu silme yetkiniz yok.");
 
         comment.IsDeleted = true;
         comment.DeletedAt = DateTime.UtcNow;
