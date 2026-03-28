@@ -55,6 +55,12 @@ Domain → Application → Infrastructure + API
 - Hangi katmanlar etkilenecek? Dependency rule ihlal ediliyor mu?
 - Bir şey ters giderse DUR ve yeniden planla — körlemesine devam etme
 
+### Plan Arşivleme
+- Onaylanan her plan `docs/plans/` altında arşivlenir
+- Format: `docs/plans/NNN-plan-adi.md` (örn: `001-global-exception-middleware.md`)
+- Dosyanın üstünde tarih yer alır
+- Bu kural her plan için geçerlidir — atlanmaz
+
 ### 2. Doğrulama Zorunluluğu
 - "Bitti" demeden önce kanıtla:
   - `dotnet build` başarılı mı?

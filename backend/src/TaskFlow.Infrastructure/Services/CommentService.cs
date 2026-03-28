@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TaskFlow.Application.DTOs.Comment;
+using TaskFlow.Application.Exceptions;
 using TaskFlow.Application.Interfaces;
 using TaskFlow.Domain.Entities;
 using TaskFlow.Infrastructure.Data;
@@ -40,16 +41,15 @@ public class CommentService : ICommentService
         return MapToResponse(comment);
     }
 
-    public async Task<bool> DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id)
     {
         var comment = await _context.Comments.FindAsync(id);
-        if (comment == null) return false;
+        if (comment == null) throw new NotFoundException("Yorum bulunamadı.");
 
         comment.IsDeleted = true;
         comment.DeletedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
-        return true;
     }
 
     private static CommentResponse MapToResponse(Comment comment)

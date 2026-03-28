@@ -30,13 +30,9 @@ public class ProjectsController : ControllerBase
 
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id)
     {
         var project = await _projectService.GetByIdAsync(id);
-        if (project == null)
-            return NotFound(new { message = "Proje bulunamadı." });
-
         return Ok(project);
     }
 
@@ -51,25 +47,17 @@ public class ProjectsController : ControllerBase
 
     [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProjectRequest request)
     {
         var project = await _projectService.UpdateAsync(id, request);
-        if (project == null)
-            return NotFound(new { message = "Proje bulunamadı." });
-
         return Ok(project);
     }
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var result = await _projectService.DeleteAsync(id);
-        if (!result)
-            return NotFound(new { message = "Proje bulunamadı." });
-
+        await _projectService.DeleteAsync(id);
         return NoContent();
     }
 

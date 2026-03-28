@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TaskFlow.Application.DTOs.Project;
+using TaskFlow.Application.Exceptions;
 using TaskFlow.Application.Interfaces;
 using TaskFlow.Domain.Entities;
 using TaskFlow.Infrastructure.Data;
@@ -24,10 +25,12 @@ public class ProjectService : IProjectService
             .ToListAsync();
     }
 
-    public async Task<ProjectResponse?> GetByIdAsync(Guid id)
+    public async Task<ProjectResponse> GetByIdAsync(Guid id)
     {
         var project = await _context.Projects.FindAsync(id);
-        return project == null ? null : MapToResponse(project);
+        if (project == null) throw new NotFoundException("Proje bulunamadı.");
+
+        return MapToResponse(project);
     }
 
     public async Task<ProjectResponse> CreateAsync(CreateProjectRequest request, Guid userId)
@@ -46,10 +49,10 @@ public class ProjectService : IProjectService
         return MapToResponse(project);
     }
 
-    public async Task<ProjectResponse?> UpdateAsync(Guid id, UpdateProjectRequest request)
+    public async Task<ProjectResponse> UpdateAsync(Guid id, UpdateProjectRequest request)
     {
         var project = await _context.Projects.FindAsync(id);
-        if (project == null) return null;
+        if (project == null) throw new NotFoundException("Proje bulunamadı.");
 
         project.Name = request.Name;
         project.Description = request.Description;
@@ -60,16 +63,15 @@ public class ProjectService : IProjectService
         return MapToResponse(project);
     }
 
-    public async Task<bool> DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id)
     {
         var project = await _context.Projects.FindAsync(id);
-        if (project == null) return false;
+        if (project == null) throw new NotFoundException("Proje bulunamadı.");
 
         project.IsDeleted = true;
         project.DeletedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
-        return true;
     }
 
     private static ProjectResponse MapToResponse(Project project)

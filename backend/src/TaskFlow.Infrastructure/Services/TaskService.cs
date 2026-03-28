@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TaskFlow.Application.DTOs.TaskItem;
+using TaskFlow.Application.Exceptions;
 using TaskFlow.Application.Interfaces;
 using TaskFlow.Infrastructure.Data;
 
@@ -23,10 +24,12 @@ public class TaskService : ITaskService
             .ToListAsync();
     }
 
-    public async Task<TaskResponse?> GetByIdAsync(Guid id)
+    public async Task<TaskResponse> GetByIdAsync(Guid id)
     {
         var task = await _context.TaskItems.FindAsync(id);
-        return task == null ? null : MapToResponse(task);
+        if (task == null) throw new NotFoundException("Görev bulunamadı.");
+
+        return MapToResponse(task);
     }
 
     public async Task<TaskResponse> CreateAsync(Guid projectId, CreateTaskRequest request, Guid userId)
@@ -49,10 +52,10 @@ public class TaskService : ITaskService
         return MapToResponse(task);
     }
 
-    public async Task<TaskResponse?> UpdateAsync(Guid id, UpdateTaskRequest request)
+    public async Task<TaskResponse> UpdateAsync(Guid id, UpdateTaskRequest request)
     {
         var task = await _context.TaskItems.FindAsync(id);
-        if (task == null) return null;
+        if (task == null) throw new NotFoundException("Görev bulunamadı.");
 
         task.Title = request.Title;
         task.Description = request.Description;
@@ -65,10 +68,10 @@ public class TaskService : ITaskService
         return MapToResponse(task);
     }
 
-    public async Task<TaskResponse?> UpdateStatusAsync(Guid id, UpdateTaskStatusRequest request)
+    public async Task<TaskResponse> UpdateStatusAsync(Guid id, UpdateTaskStatusRequest request)
     {
         var task = await _context.TaskItems.FindAsync(id);
-        if (task == null) return null;
+        if (task == null) throw new NotFoundException("Görev bulunamadı.");
 
         task.Status = request.Status;
 
@@ -77,16 +80,15 @@ public class TaskService : ITaskService
         return MapToResponse(task);
     }
 
-    public async Task<bool> DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id)
     {
         var task = await _context.TaskItems.FindAsync(id);
-        if (task == null) return false;
+        if (task == null) throw new NotFoundException("Görev bulunamadı.");
 
         task.IsDeleted = true;
         task.DeletedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
-        return true;
     }
 
     private static TaskResponse MapToResponse(Domain.Entities.TaskItem task)

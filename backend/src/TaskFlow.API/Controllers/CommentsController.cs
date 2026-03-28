@@ -37,13 +37,9 @@ public class CommentsController : ControllerBase
 
     [HttpDelete("api/v1/comments/{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var result = await _commentService.DeleteAsync(id);
-        if (!result)
-            return NotFound(new { message = "Yorum bulunamadı." });
-
+        await _commentService.DeleteAsync(id);
         return NoContent();
     }
 

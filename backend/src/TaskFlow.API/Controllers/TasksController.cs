@@ -28,13 +28,9 @@ public class TasksController : ControllerBase
 
     [HttpGet("api/v1/tasks/{id:guid}")]
     [ProducesResponseType(typeof(TaskResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id)
     {
         var task = await _taskService.GetByIdAsync(id);
-        if (task == null)
-            return NotFound(new { message = "Görev bulunamadı." });
-
         return Ok(task);
     }
 
@@ -49,37 +45,25 @@ public class TasksController : ControllerBase
 
     [HttpPut("api/v1/tasks/{id:guid}")]
     [ProducesResponseType(typeof(TaskResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateTaskRequest request)
     {
         var task = await _taskService.UpdateAsync(id, request);
-        if (task == null)
-            return NotFound(new { message = "Görev bulunamadı." });
-
         return Ok(task);
     }
 
     [HttpPatch("api/v1/tasks/{id:guid}/status")]
     [ProducesResponseType(typeof(TaskResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateTaskStatusRequest request)
     {
         var task = await _taskService.UpdateStatusAsync(id, request);
-        if (task == null)
-            return NotFound(new { message = "Görev bulunamadı." });
-
         return Ok(task);
     }
 
     [HttpDelete("api/v1/tasks/{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var result = await _taskService.DeleteAsync(id);
-        if (!result)
-            return NotFound(new { message = "Görev bulunamadı." });
-
+        await _taskService.DeleteAsync(id);
         return NoContent();
     }
 

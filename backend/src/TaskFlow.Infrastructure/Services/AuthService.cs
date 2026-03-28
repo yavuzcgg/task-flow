@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using TaskFlow.Application.DTOs.Auth;
+using TaskFlow.Application.Exceptions;
 using TaskFlow.Application.Interfaces;
 using TaskFlow.Domain.Entities;
 
@@ -23,7 +24,7 @@ public class AuthService : IAuthService
     {
         var existingUser = await _userManager.FindByEmailAsync(request.Email);
         if (existingUser != null)
-            throw new InvalidOperationException("Bu email adresi zaten kullanılıyor.");
+            throw new ConflictException("Bu email adresi zaten kullanılıyor.");
 
         var user = new User
         {
@@ -36,7 +37,7 @@ public class AuthService : IAuthService
         if (!result.Succeeded)
         {
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            throw new InvalidOperationException($"Kayıt başarısız: {errors}");
+            throw new BadRequestException($"Kayıt başarısız: {errors}");
         }
 
         return GenerateAuthResponse(user);
@@ -46,14 +47,14 @@ public class AuthService : IAuthService
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
-            throw new UnauthorizedAccessException("Email veya şifre hatalı.");
+            throw new UnauthorizedException("Email veya şifre hatalı.");
 
         var isPasswordValid = await _userManager.CheckPasswordAsync(user, request.Password);
         if (!isPasswordValid)
-            throw new UnauthorizedAccessException("Email veya şifre hatalı.");
+            throw new UnauthorizedException("Email veya şifre hatalı.");
 
         if (!user.IsActive)
-            throw new UnauthorizedAccessException("Hesabınız pasif durumda.");
+            throw new UnauthorizedException("Hesabınız pasif durumda.");
 
         return GenerateAuthResponse(user);
     }
