@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using TaskFlow.Application.DTOs.Comment;
 using TaskFlow.Application.DTOs.Common;
@@ -12,10 +13,12 @@ namespace TaskFlow.Infrastructure.Services;
 public class CommentService : ICommentService
 {
     private readonly AppDbContext _context;
+    private readonly IHubContext<TaskFlow.Infrastructure.Hubs.TaskHub> _hubContext;
 
-    public CommentService(AppDbContext context)
+    public CommentService(AppDbContext context, IHubContext<TaskFlow.Infrastructure.Hubs.TaskHub> hubContext)
     {
         _context = context;
+        _hubContext = hubContext;
     }
 
     public async Task<PagedResult<CommentResponse>> GetByTaskAsync(Guid taskItemId, PaginationParams pagination)
@@ -54,7 +57,22 @@ public class CommentService : ICommentService
         _context.Comments.Add(comment);
         await _context.SaveChangesAsync();
 
-        return MapToResponse(comment);
+        var response = MapToResponse(comment);
+
+        // Yorumun ait olduğu task'ın projectId'sini bul
+        var task = await _context.TaskItems.FindAsync(taskItemId);
+        if (task != null)
+        {
+            await _hubContext.Clients.Group($"project-{task.ProjectId}")
+                .SendAsync("ReceiveNotification", new NotificationMessage
+                {
+                    Type = "CommentAdded",
+                    Data = response,
+                    ProjectId = task.ProjectId
+                });
+        }
+
+        return response;
     }
 
     public async Task DeleteAsync(Guid id, Guid userId, UserRole userRole)

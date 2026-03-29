@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using TaskFlow.Application.DTOs.Common;
 using TaskFlow.Application.DTOs.TaskItem;
@@ -11,10 +12,12 @@ namespace TaskFlow.Infrastructure.Services;
 public class TaskService : ITaskService
 {
     private readonly AppDbContext _context;
+    private readonly IHubContext<TaskFlow.Infrastructure.Hubs.TaskHub> _hubContext;
 
-    public TaskService(AppDbContext context)
+    public TaskService(AppDbContext context, IHubContext<TaskFlow.Infrastructure.Hubs.TaskHub> hubContext)
     {
         _context = context;
+        _hubContext = hubContext;
     }
 
     public async Task<PagedResult<TaskResponse>> GetByProjectAsync(Guid projectId, TaskFilterParams filter)
@@ -23,7 +26,6 @@ public class TaskService : ITaskService
             .Where(t => t.ProjectId == projectId)
             .AsQueryable();
 
-        // Filtreler
         if (filter.Status.HasValue)
             query = query.Where(t => t.Status == filter.Status.Value);
 
@@ -77,7 +79,17 @@ public class TaskService : ITaskService
         _context.TaskItems.Add(task);
         await _context.SaveChangesAsync();
 
-        return MapToResponse(task);
+        var response = MapToResponse(task);
+
+        await _hubContext.Clients.Group($"project-{projectId}")
+            .SendAsync("ReceiveNotification", new NotificationMessage
+            {
+                Type = "TaskCreated",
+                Data = response,
+                ProjectId = projectId
+            });
+
+        return response;
     }
 
     public async Task<TaskResponse> UpdateAsync(Guid id, UpdateTaskRequest request)
@@ -105,7 +117,17 @@ public class TaskService : ITaskService
 
         await _context.SaveChangesAsync();
 
-        return MapToResponse(task);
+        var response = MapToResponse(task);
+
+        await _hubContext.Clients.Group($"project-{task.ProjectId}")
+            .SendAsync("ReceiveNotification", new NotificationMessage
+            {
+                Type = "TaskStatusChanged",
+                Data = response,
+                ProjectId = task.ProjectId
+            });
+
+        return response;
     }
 
     public async Task DeleteAsync(Guid id, Guid userId, UserRole userRole)
@@ -116,10 +138,20 @@ public class TaskService : ITaskService
         if (task.CreatedById != userId && userRole != UserRole.Admin)
             throw new UnauthorizedException("Bu görevi silme yetkiniz yok.");
 
+        var projectId = task.ProjectId;
+
         task.IsDeleted = true;
         task.DeletedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
+
+        await _hubContext.Clients.Group($"project-{projectId}")
+            .SendAsync("ReceiveNotification", new NotificationMessage
+            {
+                Type = "TaskDeleted",
+                Data = new { Id = id },
+                ProjectId = projectId
+            });
     }
 
     private static TaskResponse MapToResponse(Domain.Entities.TaskItem task)

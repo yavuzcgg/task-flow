@@ -1,6 +1,7 @@
 using FluentValidation;
 using TaskFlow.API.Filters;
 using TaskFlow.API.Middleware;
+using TaskFlow.Infrastructure.Hubs;
 using TaskFlow.Application.Validators.Auth;
 using TaskFlow.Infrastructure.Extensions;
 
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddSignalR();
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidationActionFilter>();
@@ -33,5 +35,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<TaskHub>("/hubs/tasks");
 
 app.Run();
