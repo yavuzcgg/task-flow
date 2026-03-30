@@ -37,6 +37,7 @@ out/
 *.swp
 *.swo
 .vscode/
+.cr/
 
 # OS
 .DS_Store
