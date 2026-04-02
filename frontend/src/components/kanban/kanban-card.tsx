@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -62,9 +63,12 @@ export function KanbanCard({ task, onDelete }: KanbanCardProps) {
         >
           <GripVertical className="h-4 w-4" />
         </button>
-        <span className="flex-1 text-sm font-medium leading-tight">
+        <Link
+          href={`/projects/${task.projectId}/tasks/${task.id}`}
+          className="flex-1 text-sm font-medium leading-tight hover:underline underline-offset-4"
+        >
           {task.title}
-        </span>
+        </Link>
         {onDelete && (
           <DropdownMenu>
             <DropdownMenuTrigger className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded hover:bg-muted">
