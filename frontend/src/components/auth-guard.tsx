@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore } from "@/stores/auth-store";
 
 interface AuthGuardProps {
@@ -11,8 +11,11 @@ interface AuthGuardProps {
 
 export function AuthGuard({ children, requireAuth = true }: AuthGuardProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const { isAuthenticated, hydrate } = useAuthStore();
   const [isReady, setIsReady] = useState(false);
+
+  const lang = pathname.split("/")[1] || "tr";
 
   useEffect(() => {
     hydrate();
@@ -23,11 +26,11 @@ export function AuthGuard({ children, requireAuth = true }: AuthGuardProps) {
     if (!isReady) return;
 
     if (requireAuth && !isAuthenticated) {
-      router.replace("/login");
+      router.replace(`/${lang}/login`);
     } else if (!requireAuth && isAuthenticated) {
-      router.replace("/dashboard");
+      router.replace(`/${lang}/dashboard`);
     }
-  }, [isReady, isAuthenticated, requireAuth, router]);
+  }, [isReady, isAuthenticated, requireAuth, router, lang]);
 
   if (!isReady) {
     return (

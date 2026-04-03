@@ -1,0 +1,87 @@
+{
+  "landing": {
+    "nav": {
+      "login": "Sign In",
+      "register": "Sign Up"
+    },
+    "hero": {
+      "title": "Manage Your Projects with Ease",
+      "subtitle": "Organize your team's tasks, create kanban boards, and track your projects from start to finish with TaskFlow.",
+      "cta": "Get Started",
+      "secondaryCta": "Sign In"
+    },
+    "features": {
+      "title": "Why TaskFlow?",
+      "taskManagement": {
+        "title": "Task Management",
+        "description": "Create, assign, and prioritize your tasks. Track statuses and set deadlines with ease."
+      },
+      "kanban": {
+        "title": "Kanban Board",
+        "description": "Visualize your workflow with drag-and-drop kanban boards. Move tasks effortlessly."
+      },
+      "teamCollaboration": {
+        "title": "Team Collaboration",
+        "description": "Stay connected with your team through real-time notifications and comment system."
+      }
+    },
+    "cta": {
+      "title": "Ready to Manage Your Projects?",
+      "subtitle": "Create a free account and get started right away.",
+      "button": "Sign Up for Free"
+    },
+    "footer": {
+      "copyright": "TaskFlow. All rights reserved."
+    }
+  },
+  "login": {
+    "title": "TaskFlow",
+    "subtitle": "Sign in to your account",
+    "email": "Email",
+    "emailPlaceholder": "example@email.com",
+    "password": "Password",
+    "passwordPlaceholder": "••••••••",
+    "submit": "Sign In",
+    "submitting": "Signing in...",
+    "noAccount": "Don't have an account?",
+    "register": "Sign up",
+    "defaultError": "Sign in failed. Please try again."
+  },
+  "register": {
+    "title": "TaskFlow",
+    "subtitle": "Create a new account",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "Your Full Name",
+    "email": "Email",
+    "emailPlaceholder": "example@email.com",
+    "password": "Password",
+    "passwordPlaceholder": "••••••••",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "••••••••",
+    "submit": "Sign Up",
+    "submitting": "Signing up...",
+    "hasAccount": "Already have an account?",
+    "login": "Sign in",
+    "passwordMismatch": "Passwords do not match.",
+    "defaultError": "Registration failed. Please try again."
+  },
+  "errors": {
+    "map": {
+      "Ad soyad boş olamaz.": "Full name is required.",
+      "Ad soyad en fazla 100 karakter olabilir.": "Full name must be at most 100 characters.",
+      "Email boş olamaz.": "Email is required.",
+      "Geçerli bir email adresi giriniz.": "Please enter a valid email address.",
+      "Şifre boş olamaz.": "Password is required.",
+      "Şifre en az 6 karakter olmalıdır.": "Password must be at least 6 characters.",
+      "Geçersiz rol değeri.": "Invalid role value.",
+      "Bu email adresi zaten kullanılıyor.": "This email address is already in use.",
+      "Kayıt başarısız:": "Registration failed:",
+      "Email veya şifre hatalı.": "Invalid email or password.",
+      "Hesabınız pasif durumda.": "Your account is inactive.",
+      "Validation hatası.": "Validation error.",
+      "Beklenmeyen bir hata oluştu.": "An unexpected error occurred.",
+      "Giriş başarısız. Lütfen tekrar deneyin.": "Sign in failed. Please try again.",
+      "Kayıt başarısız. Lütfen tekrar deneyin.": "Registration failed. Please try again."
+    }
+  }
+}

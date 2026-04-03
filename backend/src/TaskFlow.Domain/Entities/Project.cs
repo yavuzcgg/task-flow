@@ -12,4 +12,6 @@ public class Project : BaseEntity
     // Navigation Properties
     public User Owner { get; set; } = null!;
     public ICollection<TaskItem> Tasks { get; set; } = new List<TaskItem>();
+    public ICollection<ProjectMember> Members { get; set; } = new List<ProjectMember>();
+    public ICollection<ProjectInvitation> Invitations { get; set; } = new List<ProjectInvitation>();
 }

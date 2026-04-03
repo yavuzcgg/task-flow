@@ -34,7 +34,7 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetById(Guid id)
     {
-        var project = await _projectService.GetByIdAsync(id);
+        var project = await _projectService.GetByIdAsync(id, GetCurrentUserId());
         return Ok(project);
     }
 

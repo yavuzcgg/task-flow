@@ -21,7 +21,7 @@ public class ProjectService : IProjectService
     public async Task<PagedResult<ProjectResponse>> GetAllByUserAsync(Guid userId, PaginationParams pagination)
     {
         var query = _context.Projects
-            .Where(p => p.OwnerId == userId)
+            .Where(p => p.Members.Any(m => m.UserId == userId))
             .OrderByDescending(p => p.CreatedAt);
 
         var totalCount = await query.CountAsync();
@@ -29,7 +29,21 @@ public class ProjectService : IProjectService
         var items = await query
             .Skip((pagination.Page - 1) * pagination.PageSize)
             .Take(pagination.PageSize)
-            .Select(p => MapToResponse(p))
+            .Select(p => new ProjectResponse
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                IsPublic = p.IsPublic,
+                OwnerId = p.OwnerId,
+                CreatedAt = p.CreatedAt,
+                UpdatedAt = p.UpdatedAt,
+                UserRole = p.Members
+                    .Where(m => m.UserId == userId)
+                    .Select(m => m.Role.ToString())
+                    .FirstOrDefault(),
+                MemberCount = p.Members.Count
+            })
             .ToListAsync();
 
         return new PagedResult<ProjectResponse>
@@ -41,12 +55,18 @@ public class ProjectService : IProjectService
         };
     }
 
-    public async Task<ProjectResponse> GetByIdAsync(Guid id)
+    public async Task<ProjectResponse> GetByIdAsync(Guid id, Guid userId)
     {
-        var project = await _context.Projects.FindAsync(id);
+        var project = await _context.Projects
+            .Include(p => p.Members)
+            .FirstOrDefaultAsync(p => p.Id == id);
         if (project == null) throw new NotFoundException("Proje bulunamadı.");
 
-        return MapToResponse(project);
+        var response = MapToResponse(project);
+        response.MemberCount = project.Members.Count;
+        response.UserRole = project.Members
+            .FirstOrDefault(m => m.UserId == userId)?.Role.ToString();
+        return response;
     }
 
     public async Task<ProjectResponse> CreateAsync(CreateProjectRequest request, Guid userId)
@@ -60,9 +80,23 @@ public class ProjectService : IProjectService
         };
 
         _context.Projects.Add(project);
+
+        // Owner'ı otomatik olarak ProjectMember tablosuna ekle
+        var ownerMember = new ProjectMember
+        {
+            ProjectId = project.Id,
+            UserId = userId,
+            Role = ProjectRole.Owner,
+            CreatedBy = userId
+        };
+        _context.ProjectMembers.Add(ownerMember);
+
         await _context.SaveChangesAsync();
 
-        return MapToResponse(project);
+        var response = MapToResponse(project);
+        response.UserRole = ProjectRole.Owner.ToString();
+        response.MemberCount = 1;
+        return response;
     }
 
     public async Task<ProjectResponse> UpdateAsync(Guid id, UpdateProjectRequest request, Guid userId, UserRole userRole)
@@ -70,8 +104,17 @@ public class ProjectService : IProjectService
         var project = await _context.Projects.FindAsync(id);
         if (project == null) throw new NotFoundException("Proje bulunamadı.");
 
-        if (project.OwnerId != userId && userRole != UserRole.Admin)
-            throw new UnauthorizedException("Bu projeyi güncelleme yetkiniz yok.");
+        // Sistem Admin'i veya proje Owner/Admin'i güncelleme yapabilir
+        if (userRole != UserRole.Admin)
+        {
+            var projectRole = await _context.ProjectMembers
+                .Where(pm => pm.ProjectId == id && pm.UserId == userId)
+                .Select(pm => (ProjectRole?)pm.Role)
+                .FirstOrDefaultAsync();
+
+            if (projectRole is not (ProjectRole.Owner or ProjectRole.Admin))
+                throw new UnauthorizedException("Bu projeyi güncelleme yetkiniz yok.");
+        }
 
         project.Name = request.Name;
         project.Description = request.Description;
@@ -88,8 +131,17 @@ public class ProjectService : IProjectService
         var project = await _context.Projects.FindAsync(id);
         if (project == null) throw new NotFoundException("Proje bulunamadı.");
 
-        if (project.OwnerId != userId && userRole != UserRole.Admin)
-            throw new UnauthorizedException("Bu projeyi silme yetkiniz yok.");
+        // Sadece sistem Admin'i veya proje Owner'ı silebilir
+        if (userRole != UserRole.Admin)
+        {
+            var projectRole = await _context.ProjectMembers
+                .Where(pm => pm.ProjectId == id && pm.UserId == userId)
+                .Select(pm => (ProjectRole?)pm.Role)
+                .FirstOrDefaultAsync();
+
+            if (projectRole != ProjectRole.Owner)
+                throw new UnauthorizedException("Bu projeyi silme yetkiniz yok.");
+        }
 
         project.IsDeleted = true;
         project.DeletedAt = DateTime.UtcNow;

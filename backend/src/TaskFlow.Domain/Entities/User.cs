@@ -26,4 +26,7 @@ public class User : IdentityUser<Guid>
     public ICollection<TaskItem> AssignedTasks { get; set; } = new List<TaskItem>();
     public ICollection<TaskItem> CreatedTasks { get; set; } = new List<TaskItem>();
     public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+    public ICollection<ProjectMember> ProjectMemberships { get; set; } = new List<ProjectMember>();
+    public ICollection<ProjectInvitation> ReceivedInvitations { get; set; } = new List<ProjectInvitation>();
+    public ICollection<ProjectInvitation> SentInvitations { get; set; } = new List<ProjectInvitation>();
 }

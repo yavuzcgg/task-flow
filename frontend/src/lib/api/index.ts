@@ -15,6 +15,10 @@ import type {
   CreateCommentRequest,
   PagedResult,
   PaginationParams,
+  ProjectMemberResponse,
+  InviteToProjectRequest,
+  InvitationResponse,
+  UpdateMemberRoleRequest,
 } from "@/types";
 
 // ===== Auth =====
@@ -55,6 +59,34 @@ export const tasksApi = {
     apiClient.patch<TaskResponse>(`/tasks/${id}/status`, data),
   delete: (id: string) =>
     apiClient.delete(`/tasks/${id}`),
+};
+
+// ===== Project Members =====
+export const membersApi = {
+  getByProject: (projectId: string) =>
+    apiClient.get<ProjectMemberResponse[]>(
+      `/projects/${projectId}/members`
+    ),
+  invite: (projectId: string, data: InviteToProjectRequest) =>
+    apiClient.post<InvitationResponse>(
+      `/projects/${projectId}/invitations`,
+      data
+    ),
+  remove: (projectId: string, userId: string) =>
+    apiClient.delete(`/projects/${projectId}/members/${userId}`),
+  updateRole: (projectId: string, userId: string, data: UpdateMemberRoleRequest) =>
+    apiClient.put(`/projects/${projectId}/members/${userId}/role`, data),
+};
+
+// ===== Invitations =====
+export const invitationsApi = {
+  getPending: () =>
+    apiClient.get<InvitationResponse[]>("/invitations/pending"),
+  respond: (id: string, accept: boolean) =>
+    apiClient.post<InvitationResponse>(`/invitations/${id}/respond`, {
+      accept,
+    }),
+  cancel: (id: string) => apiClient.delete(`/invitations/${id}`),
 };
 
 // ===== Comments =====

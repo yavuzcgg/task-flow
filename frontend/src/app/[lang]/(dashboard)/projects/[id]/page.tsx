@@ -1,26 +1,32 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, usePathname } from "next/navigation";
 import { projectsApi, tasksApi } from "@/lib/api";
 import { useSignalR } from "@/hooks/use-signalr";
 import { KanbanBoard } from "@/components/kanban/kanban-board";
 import { CreateTaskDialog } from "@/components/create-task-dialog";
+import { InviteMemberDialog } from "@/components/invite-member-dialog";
+import { MemberList } from "@/components/member-list";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, UserPlus, Users } from "lucide-react";
 import type { ProjectResponse, TaskResponse } from "@/types";
 
 export default function ProjectDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const pathname = usePathname();
+  const lang = pathname.split("/")[1] || "tr";
   const projectId = params.id as string;
 
   const [project, setProject] = useState<ProjectResponse | null>(null);
   const [tasks, setTasks] = useState<TaskResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [showMembers, setShowMembers] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
@@ -32,7 +38,7 @@ export default function ProjectDetailPage() {
       setTasks(tasksRes.data.items);
     } catch {
       toast.error("Proje yüklenemedi");
-      router.push("/projects");
+      router.push(`/${lang}/projects`);
     } finally {
       setLoading(false);
     }
@@ -98,7 +104,7 @@ export default function ProjectDetailPage() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => router.push("/projects")}
+            onClick={() => router.push(`/${lang}/projects`)}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -111,11 +117,37 @@ export default function ProjectDetailPage() {
             )}
           </div>
         </div>
-        <Button onClick={() => setDialogOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Yeni Görev
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setShowMembers(!showMembers)}
+          >
+            <Users className="mr-2 h-4 w-4" />
+            Üyeler
+          </Button>
+          {(project?.userRole === "Owner" || project?.userRole === "Admin") && (
+            <Button variant="outline" onClick={() => setInviteOpen(true)}>
+              <UserPlus className="mr-2 h-4 w-4" />
+              Davet Et
+            </Button>
+          )}
+          <Button onClick={() => setDialogOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Yeni Görev
+          </Button>
+        </div>
       </div>
+
+      {/* Member List */}
+      {showMembers && (
+        <div className="rounded-lg border p-4">
+          <h2 className="mb-3 text-lg font-semibold">Proje Üyeleri</h2>
+          <MemberList
+            projectId={projectId}
+            currentUserRole={project?.userRole ?? null}
+          />
+        </div>
+      )}
 
       {/* Kanban Board */}
       <KanbanBoard
@@ -130,6 +162,12 @@ export default function ProjectDetailPage() {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         onSuccess={fetchData}
+      />
+
+      <InviteMemberDialog
+        projectId={projectId}
+        open={inviteOpen}
+        onOpenChange={setInviteOpen}
       />
     </div>
   );

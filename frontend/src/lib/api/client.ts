@@ -26,7 +26,8 @@ apiClient.interceptors.response.use(
       if (typeof window !== "undefined") {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-        window.location.href = "/login";
+        const lang = window.location.pathname.split("/")[1] || "tr";
+        window.location.href = `/${lang}/login`;
       }
     }
     return Promise.reject(error);

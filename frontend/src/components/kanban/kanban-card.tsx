@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -28,6 +29,9 @@ interface KanbanCardProps {
 }
 
 export function KanbanCard({ task, onDelete }: KanbanCardProps) {
+  const pathname = usePathname();
+  const lang = pathname.split("/")[1] || "tr";
+
   const {
     attributes,
     listeners,
@@ -64,7 +68,7 @@ export function KanbanCard({ task, onDelete }: KanbanCardProps) {
           <GripVertical className="h-4 w-4" />
         </button>
         <Link
-          href={`/projects/${task.projectId}/tasks/${task.id}`}
+          href={`/${lang}/projects/${task.projectId}/tasks/${task.id}`}
           className="flex-1 text-sm font-medium leading-tight hover:underline underline-offset-4"
         >
           {task.title}

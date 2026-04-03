@@ -62,7 +62,7 @@ public class ProjectServiceTests : IDisposable
         await _context.SaveChangesAsync();
 
         // Act
-        var result = await _projectService.GetByIdAsync(project.Id);
+        var result = await _projectService.GetByIdAsync(project.Id, _ownerId);
 
         // Assert
         Assert.Equal("Existing Project", result.Name);
@@ -74,7 +74,7 @@ public class ProjectServiceTests : IDisposable
     {
         // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(
-            () => _projectService.GetByIdAsync(Guid.NewGuid()));
+            () => _projectService.GetByIdAsync(Guid.NewGuid(), _ownerId));
     }
 
     [Fact]

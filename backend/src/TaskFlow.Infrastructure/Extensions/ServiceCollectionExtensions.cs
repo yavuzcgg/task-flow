@@ -86,6 +86,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IProjectService, ProjectService>();
         services.AddScoped<ITaskService, TaskService>();
         services.AddScoped<ICommentService, CommentService>();
+        services.AddScoped<IProjectMemberService, ProjectMemberService>();
 
         return services;
     }

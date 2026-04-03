@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useAuthStore } from "@/stores/auth-store";
 import { projectsApi } from "@/lib/api";
 import { ProjectCard } from "@/components/project-card";
@@ -13,6 +14,8 @@ import { FolderKanban, Plus } from "lucide-react";
 import type { ProjectResponse } from "@/types";
 
 export default function DashboardPage() {
+  const pathname = usePathname();
+  const lang = pathname.split("/")[1] || "tr";
   const user = useAuthStore((state) => state.user);
   const [projects, setProjects] = useState<ProjectResponse[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -76,7 +79,7 @@ export default function DashboardPage() {
           <h2 className="text-xl font-semibold">Son Projeler</h2>
           {projects.length > 0 && (
             <Link
-              href="/projects"
+              href={`/${lang}/projects`}
               className="text-sm text-primary hover:underline underline-offset-4"
             >
               Tüm Projeler →

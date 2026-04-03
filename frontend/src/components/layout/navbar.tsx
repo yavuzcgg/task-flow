@@ -1,9 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore } from "@/stores/auth-store";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./theme-toggle";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { InvitationDropdown } from "@/components/invitation-dropdown";
 import { LogOut, Menu } from "lucide-react";
 
 interface NavbarProps {
@@ -12,11 +14,14 @@ interface NavbarProps {
 
 export function Navbar({ onMenuClick }: NavbarProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, logout } = useAuthStore();
+
+  const lang = pathname.split("/")[1] || "tr";
 
   const handleLogout = () => {
     logout();
-    router.push("/login");
+    router.push(`/${lang}/login`);
   };
 
   return (
@@ -34,6 +39,8 @@ export function Navbar({ onMenuClick }: NavbarProps) {
       <div className="flex-1" />
 
       <div className="flex items-center gap-2">
+        <InvitationDropdown />
+        <LanguageSwitcher />
         <ThemeToggle />
         <span className="hidden text-sm text-muted-foreground sm:inline">
           {user?.fullName}

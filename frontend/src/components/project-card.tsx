@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -16,7 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { MoreVertical, Pencil, Trash2, Users } from "lucide-react";
 import type { ProjectResponse } from "@/types";
 
 interface ProjectCardProps {
@@ -26,6 +27,9 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project, onEdit, onDelete }: ProjectCardProps) {
+  const pathname = usePathname();
+  const lang = pathname.split("/")[1] || "tr";
+
   const formattedDate = new Date(project.createdAt).toLocaleDateString("tr-TR", {
     day: "numeric",
     month: "short",
@@ -38,7 +42,7 @@ export function ProjectCard({ project, onEdit, onDelete }: ProjectCardProps) {
         <div className="space-y-1 min-w-0 flex-1">
           <CardTitle className="text-base font-semibold truncate">
             <Link
-              href={`/projects/${project.id}`}
+              href={`/${lang}/projects/${project.id}`}
               className="hover:underline underline-offset-4"
             >
               {project.name}
@@ -77,7 +81,23 @@ export function ProjectCard({ project, onEdit, onDelete }: ProjectCardProps) {
       </CardContent>
       <CardFooter className="flex items-center justify-between text-xs text-muted-foreground">
         <span>{formattedDate}</span>
-        {project.isPublic && <Badge variant="secondary">Herkese Açık</Badge>}
+        <div className="flex items-center gap-2">
+          <span className="flex items-center gap-1">
+            <Users className="h-3 w-3" />
+            {project.memberCount}
+          </span>
+          {project.userRole && (
+            <Badge variant="outline">
+              {project.userRole === "Owner"
+                ? "Sahip"
+                : project.userRole === "Admin"
+                  ? "Yönetici"
+                  : project.userRole === "Member"
+                    ? "Üye"
+                    : "İzleyici"}
+            </Badge>
+          )}
+        </div>
       </CardFooter>
     </Card>
   );

@@ -1,0 +1,77 @@
+{
+  "landing": {
+    "nav": {
+      "login": "Giriş Yap",
+      "register": "Kayıt Ol"
+    },
+    "hero": {
+      "title": "Projelerinizi Kolayca Yönetin",
+      "subtitle": "TaskFlow ile ekibinizin görevlerini organize edin, kanban panoları oluşturun ve projelerinizi baştan sona takip edin.",
+      "cta": "Hemen Başla",
+      "secondaryCta": "Giriş Yap"
+    },
+    "features": {
+      "title": "Neden TaskFlow?",
+      "taskManagement": {
+        "title": "Görev Yönetimi",
+        "description": "Görevlerinizi oluşturun, atayın ve önceliklendirin. Durumları takip edin, son tarihleri belirleyin."
+      },
+      "kanban": {
+        "title": "Kanban Panosu",
+        "description": "Sürükle-bırak kanban panoları ile iş akışınızı görselleştirin. Görevleri kolayca taşıyın."
+      },
+      "teamCollaboration": {
+        "title": "Ekip İşbirliği",
+        "description": "Gerçek zamanlı bildirimler ve yorum sistemi ile ekibinizle iletişimde kalın."
+      }
+    },
+    "cta": {
+      "title": "Projenizi Yönetmeye Hazır mısınız?",
+      "subtitle": "Ücretsiz hesap oluşturun ve hemen başlayın.",
+      "button": "Ücretsiz Kayıt Ol"
+    },
+    "footer": {
+      "copyright": "TaskFlow. Tüm hakları saklıdır."
+    }
+  },
+  "login": {
+    "title": "TaskFlow",
+    "subtitle": "Hesabınıza giriş yapın",
+    "email": "E-posta",
+    "emailPlaceholder": "ornek@email.com",
+    "password": "Şifre",
+    "passwordPlaceholder": "••••••••",
+    "submit": "Giriş Yap",
+    "submitting": "Giriş yapılıyor...",
+    "noAccount": "Hesabınız yok mu?",
+    "register": "Kayıt olun",
+    "defaultError": "Giriş başarısız. Lütfen tekrar deneyin."
+  },
+  "register": {
+    "title": "TaskFlow",
+    "subtitle": "Yeni hesap oluşturun",
+    "fullName": "Ad Soyad",
+    "fullNamePlaceholder": "Adınız Soyadınız",
+    "email": "E-posta",
+    "emailPlaceholder": "ornek@email.com",
+    "password": "Şifre",
+    "passwordPlaceholder": "••••••••",
+    "confirmPassword": "Şifre Tekrar",
+    "confirmPasswordPlaceholder": "••••••••",
+    "submit": "Kayıt Ol",
+    "submitting": "Kayıt yapılıyor...",
+    "hasAccount": "Zaten hesabınız var mı?",
+    "login": "Giriş yapın",
+    "passwordMismatch": "Şifreler eşleşmiyor.",
+    "defaultError": "Kayıt başarısız. Lütfen tekrar deneyin."
+  },
+  "errors": {
+    "map": {
+      "Passwords must have at least one lowercase ('a'-'z').": "Şifre en az bir küçük harf içermelidir.",
+      "Passwords must have at least one uppercase ('A'-'Z').": "Şifre en az bir büyük harf içermelidir.",
+      "Passwords must have at least one digit ('0'-'9').": "Şifre en az bir rakam içermelidir.",
+      "Passwords must have at least one non alphanumeric character.": "Şifre en az bir özel karakter içermelidir.",
+      "Passwords must be at least 6 characters.": "Şifre en az 6 karakter olmalıdır."
+    }
+  }
+}

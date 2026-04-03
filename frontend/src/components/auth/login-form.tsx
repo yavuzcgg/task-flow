@@ -17,44 +17,50 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authApi } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth-store";
+import { translateError } from "@/lib/i18n/error-mapper";
 import type { ErrorResponse } from "@/types";
 
-export default function RegisterPage() {
+interface LoginFormProps {
+  dict: {
+    title: string;
+    subtitle: string;
+    email: string;
+    emailPlaceholder: string;
+    password: string;
+    passwordPlaceholder: string;
+    submit: string;
+    submitting: string;
+    noAccount: string;
+    register: string;
+    defaultError: string;
+  };
+  errorMap: Record<string, string>;
+  lang: string;
+}
+
+export function LoginForm({ dict, errorMap, lang }: LoginFormProps) {
   const router = useRouter();
   const setAuth = useAuthStore((state) => state.setAuth);
 
-  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
-    if (password !== confirmPassword) {
-      setError("Şifreler eşleşmiyor.");
-      return;
-    }
-
     setLoading(true);
 
     try {
-      const response = await authApi.register({ fullName, email, password });
+      const response = await authApi.login({ email, password });
       setAuth(response.data);
-      router.push("/dashboard");
+      router.push(`/${lang}/dashboard`);
     } catch (err) {
       const axiosError = err as AxiosError<ErrorResponse>;
-      if (axiosError.response?.data?.errors) {
-        const messages = Object.values(axiosError.response.data.errors).flat();
-        setError(messages.join(" "));
-      } else {
-        setError(
-          axiosError.response?.data?.message || "Kayıt başarısız. Lütfen tekrar deneyin."
-        );
-      }
+      const rawMessage =
+        axiosError.response?.data?.message || dict.defaultError;
+      setError(translateError(rawMessage, errorMap));
     } finally {
       setLoading(false);
     }
@@ -63,8 +69,8 @@ export default function RegisterPage() {
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold">TaskFlow</CardTitle>
-        <CardDescription>Yeni hesap oluşturun</CardDescription>
+        <CardTitle className="text-2xl font-bold">{dict.title}</CardTitle>
+        <CardDescription>{dict.subtitle}</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
@@ -74,60 +80,39 @@ export default function RegisterPage() {
             </div>
           )}
           <div className="space-y-2">
-            <Label htmlFor="fullName">Ad Soyad</Label>
-            <Input
-              id="fullName"
-              type="text"
-              placeholder="Adınız Soyadınız"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">E-posta</Label>
+            <Label htmlFor="email">{dict.email}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="ornek@email.com"
+              placeholder={dict.emailPlaceholder}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Şifre</Label>
+            <Label htmlFor="password">{dict.password}</Label>
             <Input
               id="password"
               type="password"
-              placeholder="••••••••"
+              placeholder={dict.passwordPlaceholder}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              minLength={6}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Şifre Tekrar</Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              placeholder="••••••••"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              minLength={6}
             />
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-3">
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Kayıt yapılıyor..." : "Kayıt Ol"}
+            {loading ? dict.submitting : dict.submit}
           </Button>
           <p className="text-sm text-muted-foreground">
-            Zaten hesabınız var mı?{" "}
-            <Link href="/login" className="text-primary underline-offset-4 hover:underline">
-              Giriş yapın
+            {dict.noAccount}{" "}
+            <Link
+              href={`/${lang}/register`}
+              className="text-primary underline-offset-4 hover:underline"
+            >
+              {dict.register}
             </Link>
           </p>
         </CardFooter>

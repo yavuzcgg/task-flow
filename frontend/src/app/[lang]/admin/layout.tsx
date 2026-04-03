@@ -10,10 +10,10 @@ import { cn } from "@/lib/utils";
 import { LayoutDashboard, Users, FolderKanban, ListTodo, ArrowLeft } from "lucide-react";
 
 const adminNavItems = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/users", label: "Kullanıcılar", icon: Users },
-  { href: "/admin/projects", label: "Projeler", icon: FolderKanban },
-  { href: "/admin/tasks", label: "Görevler", icon: ListTodo },
+  { path: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { path: "/admin/users", label: "Kullanıcılar", icon: Users },
+  { path: "/admin/projects", label: "Projeler", icon: FolderKanban },
+  { path: "/admin/tasks", label: "Görevler", icon: ListTodo },
 ];
 
 export default function AdminLayout({
@@ -23,6 +23,7 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const lang = pathname.split("/")[1] || "tr";
 
   return (
     <AdminGuard>
@@ -35,14 +36,15 @@ export default function AdminLayout({
             </div>
             <nav className="flex-1 space-y-1 px-3 py-4">
               {adminNavItems.map((item) => {
+                const href = `/${lang}${item.path}`;
                 const isActive =
-                  item.href === "/admin"
-                    ? pathname === "/admin"
-                    : pathname.startsWith(item.href);
+                  item.path === "/admin"
+                    ? pathname === href
+                    : pathname.startsWith(href);
                 return (
                   <Link
-                    key={item.href}
-                    href={item.href}
+                    key={item.path}
+                    href={href}
                     className={cn(
                       "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                       isActive
@@ -57,7 +59,7 @@ export default function AdminLayout({
               })}
               <div className="my-3 border-t" />
               <Link
-                href="/dashboard"
+                href={`/${lang}/dashboard`}
                 className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
               >
                 <ArrowLeft className="h-4 w-4" />

@@ -14,6 +14,8 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     public DbSet<Project> Projects => Set<Project>();
     public DbSet<TaskItem> TaskItems => Set<TaskItem>();
     public DbSet<Comment> Comments => Set<Comment>();
+    public DbSet<ProjectMember> ProjectMembers => Set<ProjectMember>();
+    public DbSet<ProjectInvitation> ProjectInvitations => Set<ProjectInvitation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,6 +28,8 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
         modelBuilder.Entity<Project>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<TaskItem>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<Comment>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<ProjectMember>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<ProjectInvitation>().HasQueryFilter(e => !e.IsDeleted);
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
