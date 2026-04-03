@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { projectsApi, tasksApi } from "@/lib/api";
+import { useSignalR } from "@/hooks/use-signalr";
 import { KanbanBoard } from "@/components/kanban/kanban-board";
 import { CreateTaskDialog } from "@/components/create-task-dialog";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,29 @@ export default function ProjectDetailPage() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // SignalR real-time updates
+  useSignalR({
+    projectId,
+    onTaskCreated: (data) => {
+      const newTask = data as TaskResponse;
+      setTasks((prev) => {
+        if (prev.some((t) => t.id === newTask.id)) return prev;
+        return [...prev, newTask];
+      });
+      toast.info("Yeni görev eklendi");
+    },
+    onTaskStatusChanged: (data) => {
+      const updated = data as TaskResponse;
+      setTasks((prev) =>
+        prev.map((t) => (t.id === updated.id ? updated : t))
+      );
+    },
+    onTaskDeleted: (data) => {
+      const { Id } = data as { Id: string };
+      setTasks((prev) => prev.filter((t) => t.id !== Id));
+    },
+  });
 
   const handleDeleteTask = async (taskId: string) => {
     if (!window.confirm("Bu görevi silmek istediğinize emin misiniz?")) return;
