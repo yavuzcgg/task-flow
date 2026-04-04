@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { projectsApi } from "@/lib/api";
+import { useDictionary } from "@/providers/dictionary-provider";
 import type { ErrorResponse } from "@/types";
 
 interface CreateProjectDialogProps {
@@ -32,6 +33,7 @@ export function CreateProjectDialog({
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const dict = useDictionary();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +45,7 @@ export function CreateProjectDialog({
         name,
         description: description || undefined,
       });
-      toast.success("Proje oluşturuldu");
+      toast.success(dict.dialogs.createProject.success);
       setName("");
       setDescription("");
       onOpenChange(false);
@@ -51,7 +53,7 @@ export function CreateProjectDialog({
     } catch (err) {
       const axiosError = err as AxiosError<ErrorResponse>;
       setError(
-        axiosError.response?.data?.message || "Proje oluşturulamadı."
+        axiosError.response?.data?.message || dict.dialogs.createProject.error
       );
     } finally {
       setLoading(false);
@@ -62,7 +64,7 @@ export function CreateProjectDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Yeni Proje</DialogTitle>
+          <DialogTitle>{dict.dialogs.createProject.title}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
@@ -71,22 +73,22 @@ export function CreateProjectDialog({
             </div>
           )}
           <div className="space-y-2">
-            <Label htmlFor="project-name">Proje Adı</Label>
+            <Label htmlFor="project-name">{dict.dialogs.createProject.nameLabel}</Label>
             <Input
               id="project-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Proje adını girin"
+              placeholder={dict.dialogs.createProject.namePlaceholder}
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="project-description">Açıklama</Label>
+            <Label htmlFor="project-description">{dict.dialogs.createProject.descriptionLabel}</Label>
             <Textarea
               id="project-description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Proje açıklaması (opsiyonel)"
+              placeholder={dict.dialogs.createProject.descriptionPlaceholder}
               rows={3}
             />
           </div>
@@ -96,10 +98,10 @@ export function CreateProjectDialog({
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
-              İptal
+              {dict.common.cancel}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Oluşturuluyor..." : "Oluştur"}
+              {loading ? dict.common.creating : dict.common.create}
             </Button>
           </DialogFooter>
         </form>

@@ -5,17 +5,8 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { LayoutDashboard, FolderKanban, Settings, ShieldCheck, X } from "lucide-react";
 import { useAuthStore } from "@/stores/auth-store";
+import { useDictionary } from "@/providers/dictionary-provider";
 import { Button } from "@/components/ui/button";
-
-const navItems = [
-  { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { path: "/projects", label: "Projeler", icon: FolderKanban },
-  { path: "/settings", label: "Ayarlar", icon: Settings },
-];
-
-const adminItems = [
-  { path: "/admin", label: "Admin Panel", icon: ShieldCheck },
-];
 
 interface MobileSidebarProps {
   open: boolean;
@@ -27,6 +18,17 @@ export function MobileSidebar({ open, onClose }: MobileSidebarProps) {
   const user = useAuthStore((state) => state.user);
   const isAdmin = user?.role === "Admin";
   const lang = pathname.split("/")[1] || "tr";
+  const dict = useDictionary();
+
+  const navItems = [
+    { path: "/dashboard", label: dict.nav.dashboard, icon: LayoutDashboard },
+    { path: "/projects", label: dict.nav.projects, icon: FolderKanban },
+    { path: "/settings", label: dict.nav.settings, icon: Settings },
+  ];
+
+  const adminItems = [
+    { path: "/admin", label: dict.nav.adminPanel, icon: ShieldCheck },
+  ];
 
   if (!open) return null;
 
@@ -43,7 +45,7 @@ export function MobileSidebar({ open, onClose }: MobileSidebarProps) {
         <div className="flex h-full flex-col">
           <div className="flex h-16 items-center justify-between border-b px-6">
             <Link href={`/${lang}/dashboard`} className="text-xl font-bold" onClick={onClose}>
-              TaskFlow
+              Task Flow
             </Link>
             <Button variant="ghost" size="icon" onClick={onClose}>
               <X className="h-4 w-4" />

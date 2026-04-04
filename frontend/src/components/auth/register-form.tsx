@@ -38,6 +38,7 @@ interface RegisterFormProps {
     login: string;
     passwordMismatch: string;
     defaultError: string;
+    backToHome: string;
   };
   errorMap: Record<string, string>;
   lang: string;
@@ -92,7 +93,7 @@ export function RegisterForm({ dict, errorMap, lang }: RegisterFormProps) {
         <CardDescription>{dict.subtitle}</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-5">
           {error && (
             <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
               {error}
@@ -145,7 +146,7 @@ export function RegisterForm({ dict, errorMap, lang }: RegisterFormProps) {
             />
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col gap-3">
+        <CardFooter className="flex flex-col gap-4 pt-2">
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? dict.submitting : dict.submit}
           </Button>
@@ -158,6 +159,12 @@ export function RegisterForm({ dict, errorMap, lang }: RegisterFormProps) {
               {dict.login}
             </Link>
           </p>
+          <Link
+            href={`/${lang}`}
+            className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          >
+            {dict.backToHome}
+          </Link>
         </CardFooter>
       </form>
     </Card>

@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { GripVertical, MoreVertical, Trash2, Calendar } from "lucide-react";
+import { useDictionary } from "@/providers/dictionary-provider";
 import type { TaskResponse } from "@/types";
 
 const priorityColors: Record<string, string> = {
@@ -31,6 +32,7 @@ interface KanbanCardProps {
 export function KanbanCard({ task, onDelete }: KanbanCardProps) {
   const pathname = usePathname();
   const lang = pathname.split("/")[1] || "tr";
+  const dict = useDictionary();
 
   const {
     attributes,
@@ -47,7 +49,7 @@ export function KanbanCard({ task, onDelete }: KanbanCardProps) {
   };
 
   const formattedDueDate = task.dueDate
-    ? new Date(task.dueDate).toLocaleDateString("tr-TR", {
+    ? new Date(task.dueDate).toLocaleDateString(lang === "en" ? "en-US" : "tr-TR", {
         day: "numeric",
         month: "short",
       })
@@ -84,7 +86,7 @@ export function KanbanCard({ task, onDelete }: KanbanCardProps) {
                 className="text-destructive focus:text-destructive"
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Sil
+                {dict.common.delete}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

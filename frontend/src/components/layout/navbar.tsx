@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { InvitationDropdown } from "@/components/invitation-dropdown";
+import { useDictionary } from "@/providers/dictionary-provider";
 import { LogOut, Menu } from "lucide-react";
 
 interface NavbarProps {
@@ -16,6 +17,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
+  const dict = useDictionary();
 
   const lang = pathname.split("/")[1] || "tr";
 
@@ -47,7 +49,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
         </span>
         <Button variant="ghost" size="icon" onClick={handleLogout}>
           <LogOut className="h-4 w-4" />
-          <span className="sr-only">Çıkış yap</span>
+          <span className="sr-only">{dict.common.logout}</span>
         </Button>
       </div>
     </header>

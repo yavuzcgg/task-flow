@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { projectsApi } from "@/lib/api";
+import { useDictionary } from "@/providers/dictionary-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FolderKanban, Users, ListTodo } from "lucide-react";
 
 export default function AdminDashboardPage() {
+  const dict = useDictionary();
   const [projectCount, setProjectCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -25,14 +27,14 @@ export default function AdminDashboardPage() {
   }, []);
 
   const stats = [
-    { label: "Toplam Proje", value: projectCount, icon: FolderKanban },
-    { label: "Kullanıcılar", value: "—", icon: Users, note: "API bekleniyor" },
-    { label: "Görevler", value: "—", icon: ListTodo, note: "API bekleniyor" },
+    { label: dict.admin.totalProjects, value: projectCount, icon: FolderKanban },
+    { label: dict.admin.usersLabel, value: "—", icon: Users, note: dict.admin.apiPending },
+    { label: dict.admin.tasksLabel, value: "—", icon: ListTodo, note: dict.admin.apiPending },
   ];
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+      <h1 className="text-3xl font-bold">{dict.admin.title}</h1>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {stats.map((stat) => (
@@ -61,9 +63,9 @@ export default function AdminDashboardPage() {
 
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
-          <p className="text-lg font-medium">Admin panel geliştirme aşamasında</p>
+          <p className="text-lg font-medium">{dict.admin.underDevelopment}</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Backend&apos;e admin endpoint&apos;leri eklendikçe bu panel zenginleşecek
+            {dict.admin.underDevelopmentNote}
           </p>
         </CardContent>
       </Card>

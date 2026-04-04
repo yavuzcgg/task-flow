@@ -8,14 +8,8 @@ import {
 import { KanbanCard } from "./kanban-card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { useDictionary } from "@/providers/dictionary-provider";
 import type { TaskResponse } from "@/types";
-
-const statusLabels: Record<string, string> = {
-  Todo: "Yapılacak",
-  InProgress: "Devam Ediyor",
-  InReview: "İncelemede",
-  Done: "Tamamlandı",
-};
 
 const statusColors: Record<string, string> = {
   Todo: "bg-slate-500",
@@ -37,7 +31,15 @@ export function KanbanColumn({
   onAddTask,
   onDeleteTask,
 }: KanbanColumnProps) {
+  const dict = useDictionary();
   const { setNodeRef, isOver } = useDroppable({ id: status });
+
+  const statusLabels: Record<string, string> = {
+    Todo: dict.common.statuses.Todo,
+    InProgress: dict.common.statuses.InProgress,
+    InReview: dict.common.statuses.InReview,
+    Done: dict.common.statuses.Done,
+  };
 
   return (
     <div
@@ -75,7 +77,7 @@ export function KanbanColumn({
           ))}
           {tasks.length === 0 && (
             <div className="flex flex-1 items-center justify-center py-8 text-xs text-muted-foreground">
-              Görev yok
+              {dict.kanban.noTasks}
             </div>
           )}
         </div>

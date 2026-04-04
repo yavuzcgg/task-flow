@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, usePathname } from "next/navigation";
 import { tasksApi } from "@/lib/api";
+import { useDictionary } from "@/providers/dictionary-provider";
 import { CommentSection } from "@/components/comment-section";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,25 +14,11 @@ import { toast } from "sonner";
 import { ArrowLeft, Calendar, Flag, Layers } from "lucide-react";
 import type { TaskResponse } from "@/types";
 
-const statusLabels: Record<string, string> = {
-  Todo: "Yapılacak",
-  InProgress: "Devam Ediyor",
-  InReview: "İncelemede",
-  Done: "Tamamlandı",
-};
-
 const statusColors: Record<string, string> = {
   Todo: "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300",
   InProgress: "bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-300",
   InReview: "bg-amber-100 text-amber-800 dark:bg-amber-800 dark:text-amber-300",
   Done: "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-300",
-};
-
-const priorityLabels: Record<string, string> = {
-  Low: "Düşük",
-  Medium: "Orta",
-  High: "Yüksek",
-  Critical: "Kritik",
 };
 
 const priorityColors: Record<string, string> = {
@@ -42,10 +29,26 @@ const priorityColors: Record<string, string> = {
 };
 
 export default function TaskDetailPage() {
+  const dict = useDictionary();
   const params = useParams();
   const router = useRouter();
+  const pathname = usePathname();
+  const lang = pathname.split("/")[1] || "tr";
   const projectId = params.id as string;
   const taskId = params.taskId as string;
+
+  const statusLabels: Record<string, string> = {
+    Todo: dict.common.statuses.Todo,
+    InProgress: dict.common.statuses.InProgress,
+    InReview: dict.common.statuses.InReview,
+    Done: dict.common.statuses.Done,
+  };
+  const priorityLabels: Record<string, string> = {
+    Low: dict.common.priorities.Low,
+    Medium: dict.common.priorities.Medium,
+    High: dict.common.priorities.High,
+    Critical: dict.common.priorities.Critical,
+  };
 
   const [task, setTask] = useState<TaskResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -55,7 +58,7 @@ export default function TaskDetailPage() {
       const response = await tasksApi.getById(taskId);
       setTask(response.data);
     } catch {
-      toast.error("Görev yüklenemedi");
+      toast.error(dict.taskDetail.loadError);
       router.push(`/projects/${projectId}`);
     } finally {
       setLoading(false);
@@ -78,7 +81,7 @@ export default function TaskDetailPage() {
 
   if (!task) return null;
 
-  const formattedCreatedAt = new Date(task.createdAt).toLocaleDateString("tr-TR", {
+  const formattedCreatedAt = new Date(task.createdAt).toLocaleDateString(lang === "en" ? "en-US" : "tr-TR", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -87,7 +90,7 @@ export default function TaskDetailPage() {
   });
 
   const formattedDueDate = task.dueDate
-    ? new Date(task.dueDate).toLocaleDateString("tr-TR", {
+    ? new Date(task.dueDate).toLocaleDateString(lang === "en" ? "en-US" : "tr-TR", {
         day: "numeric",
         month: "long",
         year: "numeric",
@@ -111,7 +114,7 @@ export default function TaskDetailPage() {
       {/* Task Details Card */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Görev Detayları</CardTitle>
+          <CardTitle className="text-base">{dict.taskDetail.details}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Status & Priority */}
@@ -141,7 +144,7 @@ export default function TaskDetailPage() {
             <>
               <Separator />
               <div>
-                <p className="mb-1 text-sm font-medium text-muted-foreground">Açıklama</p>
+                <p className="mb-1 text-sm font-medium text-muted-foreground">{dict.taskDetail.description}</p>
                 <p className="text-sm whitespace-pre-wrap">{task.description}</p>
               </div>
             </>
@@ -151,7 +154,7 @@ export default function TaskDetailPage() {
 
           {/* Meta */}
           <p className="text-xs text-muted-foreground">
-            Oluşturulma: {formattedCreatedAt}
+            {dict.taskDetail.createdAt}: {formattedCreatedAt}
           </p>
         </CardContent>
       </Card>

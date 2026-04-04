@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { usePathname } from "next/navigation";
 import { AxiosError } from "axios";
 import { commentsApi } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth-store";
@@ -10,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Trash2, MessageSquare, Send } from "lucide-react";
+import { useDictionary } from "@/providers/dictionary-provider";
 import type { CommentResponse, ErrorResponse } from "@/types";
 
 interface CommentSectionProps {
@@ -17,6 +19,9 @@ interface CommentSectionProps {
 }
 
 export function CommentSection({ taskId }: CommentSectionProps) {
+  const pathname = usePathname();
+  const lang = pathname.split("/")[1] || "tr";
+  const dict = useDictionary();
   const user = useAuthStore((state) => state.user);
   const [comments, setComments] = useState<CommentResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,26 +54,26 @@ export function CommentSection({ taskId }: CommentSectionProps) {
       fetchComments();
     } catch (err) {
       const axiosError = err as AxiosError<ErrorResponse>;
-      toast.error(axiosError.response?.data?.message || "Yorum eklenemedi");
+      toast.error(axiosError.response?.data?.message || dict.comments.addError);
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleDelete = async (commentId: string) => {
-    if (!window.confirm("Bu yorumu silmek istediğinize emin misiniz?")) return;
+    if (!window.confirm(dict.comments.deleteConfirm)) return;
 
     try {
       await commentsApi.delete(commentId);
       setComments((prev) => prev.filter((c) => c.id !== commentId));
-      toast.success("Yorum silindi");
+      toast.success(dict.comments.deleteSuccess);
     } catch {
-      toast.error("Yorum silinemedi");
+      toast.error(dict.comments.deleteError);
     }
   };
 
   const formatDate = (dateStr: string) =>
-    new Date(dateStr).toLocaleDateString("tr-TR", {
+    new Date(dateStr).toLocaleDateString(lang === "en" ? "en-US" : "tr-TR", {
       day: "numeric",
       month: "short",
       year: "numeric",
@@ -81,7 +86,7 @@ export function CommentSection({ taskId }: CommentSectionProps) {
       <div className="flex items-center gap-2">
         <MessageSquare className="h-5 w-5" />
         <h3 className="text-lg font-semibold">
-          Yorumlar ({comments.length})
+          {dict.comments.title} ({comments.length})
         </h3>
       </div>
 
@@ -90,7 +95,7 @@ export function CommentSection({ taskId }: CommentSectionProps) {
         <Textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Yorum yazın..."
+          placeholder={dict.comments.placeholder}
           rows={2}
           className="flex-1"
         />
@@ -115,7 +120,7 @@ export function CommentSection({ taskId }: CommentSectionProps) {
         </div>
       ) : comments.length === 0 ? (
         <p className="py-6 text-center text-sm text-muted-foreground">
-          Henüz yorum yok. İlk yorumu siz yazın!
+          {dict.comments.empty}
         </p>
       ) : (
         <div className="space-y-3">

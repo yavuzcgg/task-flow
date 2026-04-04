@@ -10,17 +10,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { invitationsApi } from "@/lib/api";
+import { useDictionary } from "@/providers/dictionary-provider";
 import { toast } from "sonner";
 import type { InvitationResponse } from "@/types";
 
-const roleLabels: Record<string, string> = {
-  Viewer: "İzleyici",
-  Member: "Üye",
-  Admin: "Yönetici",
-};
-
 export function InvitationDropdown() {
+  const dict = useDictionary();
   const [invitations, setInvitations] = useState<InvitationResponse[]>([]);
+
+  const roleLabels: Record<string, string> = {
+    Viewer: dict.common.roles.Viewer,
+    Member: dict.common.roles.Member,
+    Admin: dict.common.roles.Admin,
+  };
   const [loading, setLoading] = useState(false);
 
   const fetchInvitations = useCallback(async () => {
@@ -41,9 +43,9 @@ export function InvitationDropdown() {
     try {
       await invitationsApi.respond(id, accept);
       setInvitations((prev) => prev.filter((inv) => inv.id !== id));
-      toast.success(accept ? "Davet kabul edildi" : "Davet reddedildi");
+      toast.success(accept ? dict.invitations.acceptSuccess : dict.invitations.rejectSuccess);
     } catch {
-      toast.error("İşlem başarısız");
+      toast.error(dict.invitations.error);
     } finally {
       setLoading(false);
     }
@@ -63,7 +65,7 @@ export function InvitationDropdown() {
                 {invitations.length}
               </Badge>
             )}
-            <span className="sr-only">Davetler</span>
+            <span className="sr-only">{dict.invitations.label}</span>
           </Button>
         }
       />
@@ -71,7 +73,7 @@ export function InvitationDropdown() {
       <DropdownMenuContent align="end" className="w-80">
         {invitations.length === 0 ? (
           <div className="p-4 text-center text-sm text-muted-foreground">
-            Bekleyen davet yok
+            {dict.invitations.noPending}
           </div>
         ) : (
           <div className="max-h-80 overflow-y-auto">
@@ -81,10 +83,28 @@ export function InvitationDropdown() {
                 className="flex flex-col gap-2 border-b p-3 last:border-0"
               >
                 <div className="text-sm">
-                  <span className="font-medium">{inv.invitedByUserName}</span>{" "}
-                  sizi{" "}
-                  <span className="font-medium">{inv.projectName}</span>{" "}
-                  projesine davet etti
+                  {dict.invitations.invitedBy
+                    .split("{inviter}")
+                    .flatMap((part, i) =>
+                      i === 0
+                        ? [part]
+                        : [
+                            <span key={`inviter-${inv.id}`} className="font-medium">{inv.invitedByUserName}</span>,
+                            part,
+                          ]
+                    )
+                    .flatMap((part, i) =>
+                      typeof part === "string"
+                        ? part.split("{project}").flatMap((sub, j) =>
+                            j === 0
+                              ? [sub]
+                              : [
+                                  <span key={`project-${inv.id}-${j}`} className="font-medium">{inv.projectName}</span>,
+                                  sub,
+                                ]
+                          )
+                        : [part]
+                    )}
                 </div>
                 <div className="flex items-center justify-between">
                   <Badge variant="secondary">
@@ -99,7 +119,7 @@ export function InvitationDropdown() {
                       disabled={loading}
                     >
                       <X className="mr-1 h-3 w-3" />
-                      Reddet
+                      {dict.invitations.reject}
                     </Button>
                     <Button
                       size="sm"
@@ -108,7 +128,7 @@ export function InvitationDropdown() {
                       disabled={loading}
                     >
                       <Check className="mr-1 h-3 w-3" />
-                      Kabul Et
+                      {dict.invitations.accept}
                     </Button>
                   </div>
                 </div>

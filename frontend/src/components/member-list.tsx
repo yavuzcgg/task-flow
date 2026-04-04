@@ -16,18 +16,12 @@ import { toast } from "sonner";
 import { ProjectRole } from "@/types";
 import type { ProjectMemberResponse } from "@/types";
 import { useAuthStore } from "@/stores/auth-store";
+import { useDictionary } from "@/providers/dictionary-provider";
 
 interface MemberListProps {
   projectId: string;
   currentUserRole: string | null;
 }
-
-const roleLabels: Record<string, string> = {
-  Owner: "Sahip",
-  Admin: "Yönetici",
-  Member: "Üye",
-  Viewer: "İzleyici",
-};
 
 const roleBadgeVariant: Record<string, "default" | "secondary" | "outline"> = {
   Owner: "default",
@@ -41,32 +35,40 @@ export function MemberList({ projectId, currentUserRole }: MemberListProps) {
   const [loading, setLoading] = useState(true);
   const user = useAuthStore((state) => state.user);
   const canManage = currentUserRole === "Owner" || currentUserRole === "Admin";
+  const dict = useDictionary();
+
+  const roleLabels: Record<string, string> = {
+    Owner: dict.common.roles.Owner,
+    Admin: dict.common.roles.Admin,
+    Member: dict.common.roles.Member,
+    Viewer: dict.common.roles.Viewer,
+  };
 
   const fetchMembers = useCallback(async () => {
     try {
       const res = await membersApi.getByProject(projectId);
       setMembers(res.data);
     } catch {
-      toast.error("Üyeler yüklenemedi");
+      toast.error(dict.members.loadError);
     } finally {
       setLoading(false);
     }
-  }, [projectId]);
+  }, [projectId, dict.members.loadError]);
 
   useEffect(() => {
     fetchMembers();
   }, [fetchMembers]);
 
   const handleRemove = async (userId: string) => {
-    if (!window.confirm("Bu üyeyi projeden çıkarmak istediğinize emin misiniz?"))
+    if (!window.confirm(dict.members.removeConfirm))
       return;
 
     try {
       await membersApi.remove(projectId, userId);
       setMembers((prev) => prev.filter((m) => m.userId !== userId));
-      toast.success("Üye projeden çıkarıldı");
+      toast.success(dict.members.removeSuccess);
     } catch {
-      toast.error("Üye çıkarılamadı");
+      toast.error(dict.members.removeError);
     }
   };
 
@@ -80,9 +82,9 @@ export function MemberList({ projectId, currentUserRole }: MemberListProps) {
             : m
         )
       );
-      toast.success("Rol güncellendi");
+      toast.success(dict.members.roleUpdateSuccess);
     } catch {
-      toast.error("Rol güncellenemedi");
+      toast.error(dict.members.roleUpdateError);
     }
   };
 
@@ -139,7 +141,7 @@ export function MemberList({ projectId, currentUserRole }: MemberListProps) {
                             }
                           >
                             <Shield className="mr-2 h-4 w-4" />
-                            Yönetici Yap
+                            {dict.members.makeAdmin}
                           </DropdownMenuItem>
                         )}
                         {member.role !== "Member" && (
@@ -149,7 +151,7 @@ export function MemberList({ projectId, currentUserRole }: MemberListProps) {
                             }
                           >
                             <Users className="mr-2 h-4 w-4" />
-                            Üye Yap
+                            {dict.members.makeMember}
                           </DropdownMenuItem>
                         )}
                         {member.role !== "Viewer" && (
@@ -159,7 +161,7 @@ export function MemberList({ projectId, currentUserRole }: MemberListProps) {
                             }
                           >
                             <Eye className="mr-2 h-4 w-4" />
-                            İzleyici Yap
+                            {dict.members.makeViewer}
                           </DropdownMenuItem>
                         )}
                       </>
@@ -169,7 +171,7 @@ export function MemberList({ projectId, currentUserRole }: MemberListProps) {
                       className="text-destructive focus:text-destructive"
                     >
                       <UserMinus className="mr-2 h-4 w-4" />
-                      Çıkar
+                      {dict.members.remove}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

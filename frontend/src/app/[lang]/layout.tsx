@@ -1,24 +1,7 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
-import { ThemeProvider } from "@/providers/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
-import { hasLocale } from "./dictionaries";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-  title: "TaskFlow",
-  description: "Task management application",
-};
+import { getDictionary, hasLocale } from "./dictionaries";
+import { HtmlLangSetter } from "@/components/html-lang-setter";
+import { DictionaryProvider } from "@/providers/dictionary-provider";
 
 export async function generateStaticParams() {
   return [{ lang: "tr" }, { lang: "en" }];
@@ -32,23 +15,14 @@ export default async function LangLayout({
 
   if (!hasLocale(lang)) notFound();
 
+  const dict = await getDictionary(lang);
+
   return (
-    <html
-      lang={lang}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-      suppressHydrationWarning
-    >
-      <body className="min-h-full flex flex-col">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster />
-        </ThemeProvider>
-      </body>
-    </html>
+    <>
+      <HtmlLangSetter lang={lang} />
+      <DictionaryProvider dictionary={dict}>
+        {children}
+      </DictionaryProvider>
+    </>
   );
 }

@@ -11,7 +11,7 @@
       "secondaryCta": "Sign In"
     },
     "features": {
-      "title": "Why TaskFlow?",
+      "title": "Why Task Flow?",
       "taskManagement": {
         "title": "Task Management",
         "description": "Create, assign, and prioritize your tasks. Track statuses and set deadlines with ease."
@@ -35,7 +35,7 @@
     }
   },
   "login": {
-    "title": "TaskFlow",
+    "title": "Task Flow",
     "subtitle": "Sign in to your account",
     "email": "Email",
     "emailPlaceholder": "example@email.com",
@@ -45,10 +45,11 @@
     "submitting": "Signing in...",
     "noAccount": "Don't have an account?",
     "register": "Sign up",
-    "defaultError": "Sign in failed. Please try again."
+    "defaultError": "Sign in failed. Please try again.",
+    "backToHome": "Back to Home"
   },
   "register": {
-    "title": "TaskFlow",
+    "title": "Task Flow",
     "subtitle": "Create a new account",
     "fullName": "Full Name",
     "fullNamePlaceholder": "Your Full Name",
@@ -63,7 +64,185 @@
     "hasAccount": "Already have an account?",
     "login": "Sign in",
     "passwordMismatch": "Passwords do not match.",
+    "backToHome": "Back to Home",
     "defaultError": "Registration failed. Please try again."
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "settings": "Settings",
+    "adminPanel": "Admin Panel"
+  },
+  "common": {
+    "newProject": "New Project",
+    "createProject": "Create Project",
+    "newTask": "New Task",
+    "cancel": "Cancel",
+    "create": "Create",
+    "creating": "Creating...",
+    "delete": "Delete",
+    "edit": "Edit",
+    "logout": "Log out",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "noDescription": "No description",
+    "comingSoon": "Coming Soon",
+    "roles": {
+      "Owner": "Owner",
+      "Admin": "Admin",
+      "Member": "Member",
+      "Viewer": "Viewer"
+    },
+    "statuses": {
+      "Todo": "To Do",
+      "InProgress": "In Progress",
+      "InReview": "In Review",
+      "Done": "Done"
+    },
+    "priorities": {
+      "Low": "Low",
+      "Medium": "Medium",
+      "High": "High",
+      "Critical": "Critical"
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome, {name}!",
+    "welcomeFallback": "User",
+    "totalProjects": "Total Projects",
+    "recentProjects": "Recent Projects",
+    "allProjects": "All Projects →",
+    "noProjects": "No projects yet",
+    "noProjectsHint": "Get started by creating your first project"
+  },
+  "projects": {
+    "title": "Projects",
+    "noProjects": "No projects yet",
+    "noProjectsHint": "Get started by creating your first project",
+    "loadError": "Failed to load projects",
+    "deleteConfirm": "Are you sure you want to delete this project?",
+    "deleteSuccess": "Project deleted",
+    "deleteError": "Failed to delete project"
+  },
+  "projectDetail": {
+    "loadError": "Failed to load project",
+    "members": "Members",
+    "invite": "Invite",
+    "projectMembers": "Project Members",
+    "taskAdded": "New task added",
+    "deleteTaskConfirm": "Are you sure you want to delete this task?",
+    "taskDeleteSuccess": "Task deleted",
+    "taskDeleteError": "Failed to delete task"
+  },
+  "taskDetail": {
+    "loadError": "Failed to load task",
+    "details": "Task Details",
+    "description": "Description",
+    "createdAt": "Created"
+  },
+  "settings": {
+    "title": "Settings",
+    "profileInfo": "Profile Information",
+    "fullName": "Full Name",
+    "email": "Email",
+    "role": "Role",
+    "themeMode": "Theme Mode",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "colorTheme": "Color Theme",
+    "colorThemeNote": "Color theme customization will be fully integrated with CSS variables in the future"
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "panelTitle": "Admin Panel",
+    "backToDashboard": "Back to Dashboard",
+    "totalProjects": "Total Projects",
+    "usersLabel": "Users",
+    "tasksLabel": "Tasks",
+    "apiPending": "API pending",
+    "underDevelopment": "Admin panel is under development",
+    "underDevelopmentNote": "This panel will be enriched as admin endpoints are added to the backend",
+    "usersPage": {
+      "title": "User Management",
+      "comingSoonNote": "Backend endpoints are needed for user listing and role management"
+    },
+    "projectsPage": {
+      "title": "All Projects",
+      "comingSoonNote": "Admin endpoint needed for listing all projects"
+    },
+    "tasksPage": {
+      "title": "All Tasks",
+      "comingSoonNote": "Admin endpoint needed for listing all tasks"
+    }
+  },
+  "kanban": {
+    "noTasks": "No tasks",
+    "statusUpdateError": "Failed to update task status"
+  },
+  "dialogs": {
+    "createProject": {
+      "title": "New Project",
+      "nameLabel": "Project Name",
+      "namePlaceholder": "Enter project name",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Project description (optional)",
+      "success": "Project created",
+      "error": "Failed to create project."
+    },
+    "createTask": {
+      "title": "New Task",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Task title",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Task description (optional)",
+      "priorityLabel": "Priority",
+      "dueDateLabel": "Due Date",
+      "success": "Task created",
+      "error": "Failed to create task."
+    },
+    "inviteMember": {
+      "title": "Invite Member",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "user@email.com",
+      "roleLabel": "Role",
+      "submit": "Invite",
+      "submitting": "Sending...",
+      "success": "Invitation sent",
+      "error": "Failed to send invitation"
+    }
+  },
+  "comments": {
+    "title": "Comments",
+    "placeholder": "Write a comment...",
+    "empty": "No comments yet. Be the first to comment!",
+    "addError": "Failed to add comment",
+    "deleteConfirm": "Are you sure you want to delete this comment?",
+    "deleteSuccess": "Comment deleted",
+    "deleteError": "Failed to delete comment"
+  },
+  "members": {
+    "loadError": "Failed to load members",
+    "removeConfirm": "Are you sure you want to remove this member from the project?",
+    "removeSuccess": "Member removed from project",
+    "removeError": "Failed to remove member",
+    "roleUpdateSuccess": "Role updated",
+    "roleUpdateError": "Failed to update role",
+    "makeAdmin": "Make Admin",
+    "makeMember": "Make Member",
+    "makeViewer": "Make Viewer",
+    "remove": "Remove"
+  },
+  "invitations": {
+    "label": "Invitations",
+    "noPending": "No pending invitations",
+    "invitedBy": "{inviter} invited you to {project}",
+    "accept": "Accept",
+    "reject": "Decline",
+    "acceptSuccess": "Invitation accepted",
+    "rejectSuccess": "Invitation declined",
+    "error": "Operation failed"
   },
   "errors": {
     "map": {

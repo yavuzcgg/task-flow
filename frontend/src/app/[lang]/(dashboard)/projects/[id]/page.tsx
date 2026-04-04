@@ -12,9 +12,11 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { ArrowLeft, Plus, UserPlus, Users } from "lucide-react";
+import { useDictionary } from "@/providers/dictionary-provider";
 import type { ProjectResponse, TaskResponse } from "@/types";
 
 export default function ProjectDetailPage() {
+  const dict = useDictionary();
   const params = useParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -37,7 +39,7 @@ export default function ProjectDetailPage() {
       setProject(projectRes.data);
       setTasks(tasksRes.data.items);
     } catch {
-      toast.error("Proje yüklenemedi");
+      toast.error(dict.projectDetail.loadError);
       router.push(`/${lang}/projects`);
     } finally {
       setLoading(false);
@@ -57,7 +59,7 @@ export default function ProjectDetailPage() {
         if (prev.some((t) => t.id === newTask.id)) return prev;
         return [...prev, newTask];
       });
-      toast.info("Yeni görev eklendi");
+      toast.info(dict.projectDetail.taskAdded);
     },
     onTaskStatusChanged: (data) => {
       const updated = data as TaskResponse;
@@ -72,14 +74,14 @@ export default function ProjectDetailPage() {
   });
 
   const handleDeleteTask = async (taskId: string) => {
-    if (!window.confirm("Bu görevi silmek istediğinize emin misiniz?")) return;
+    if (!window.confirm(dict.projectDetail.deleteTaskConfirm)) return;
 
     try {
       await tasksApi.delete(taskId);
       setTasks((prev) => prev.filter((t) => t.id !== taskId));
-      toast.success("Görev silindi");
+      toast.success(dict.projectDetail.taskDeleteSuccess);
     } catch {
-      toast.error("Görev silinemedi");
+      toast.error(dict.projectDetail.taskDeleteError);
     }
   };
 
@@ -123,17 +125,17 @@ export default function ProjectDetailPage() {
             onClick={() => setShowMembers(!showMembers)}
           >
             <Users className="mr-2 h-4 w-4" />
-            Üyeler
+            {dict.projectDetail.members}
           </Button>
           {(project?.userRole === "Owner" || project?.userRole === "Admin") && (
             <Button variant="outline" onClick={() => setInviteOpen(true)}>
               <UserPlus className="mr-2 h-4 w-4" />
-              Davet Et
+              {dict.projectDetail.invite}
             </Button>
           )}
           <Button onClick={() => setDialogOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            Yeni Görev
+            {dict.common.newTask}
           </Button>
         </div>
       </div>
@@ -141,7 +143,7 @@ export default function ProjectDetailPage() {
       {/* Member List */}
       {showMembers && (
         <div className="rounded-lg border p-4">
-          <h2 className="mb-3 text-lg font-semibold">Proje Üyeleri</h2>
+          <h2 className="mb-3 text-lg font-semibold">{dict.projectDetail.projectMembers}</h2>
           <MemberList
             projectId={projectId}
             currentUserRole={project?.userRole ?? null}

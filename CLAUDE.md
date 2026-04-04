@@ -48,6 +48,14 @@ Domain → Application → Infrastructure + API
 - Her endpoint'te uygun HTTP status code döndürülür
 - Connection string'ler appsettings'te, secret'lar environment variable'da
 
+### Frontend i18n Kuralları
+- Tüm kullanıcıya görünen metinler dictionary JSON dosyalarından gelmelidir — hardcoded metin yasaktır
+- Dictionary dosyaları: `frontend/src/app/[lang]/dictionaries/tr.json` ve `en.json`
+- Client component'lerde `useDictionary()` hook'u kullanılır
+- Yeni sayfa/component eklerken: önce dictionary key'lerini her iki JSON'a ekle, sonra `dict.section.key` ile kullan
+- Toast mesajları, confirm dialog'ları, placeholder'lar dahil tüm string'ler dictionary'den gelmelidir
+- Tarih formatları locale-aware olmalı: `toLocaleDateString(lang === "en" ? "en-US" : "tr-TR", ...)`
+
 ## Çalışma Kuralları
 
 ### 1. Plan-First Yaklaşım

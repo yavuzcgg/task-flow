@@ -11,7 +11,7 @@
       "secondaryCta": "Giriş Yap"
     },
     "features": {
-      "title": "Neden TaskFlow?",
+      "title": "Neden Task Flow?",
       "taskManagement": {
         "title": "Görev Yönetimi",
         "description": "Görevlerinizi oluşturun, atayın ve önceliklendirin. Durumları takip edin, son tarihleri belirleyin."
@@ -35,7 +35,7 @@
     }
   },
   "login": {
-    "title": "TaskFlow",
+    "title": "Task Flow",
     "subtitle": "Hesabınıza giriş yapın",
     "email": "E-posta",
     "emailPlaceholder": "ornek@email.com",
@@ -45,10 +45,11 @@
     "submitting": "Giriş yapılıyor...",
     "noAccount": "Hesabınız yok mu?",
     "register": "Kayıt olun",
-    "defaultError": "Giriş başarısız. Lütfen tekrar deneyin."
+    "defaultError": "Giriş başarısız. Lütfen tekrar deneyin.",
+    "backToHome": "Ana Sayfaya Dön"
   },
   "register": {
-    "title": "TaskFlow",
+    "title": "Task Flow",
     "subtitle": "Yeni hesap oluşturun",
     "fullName": "Ad Soyad",
     "fullNamePlaceholder": "Adınız Soyadınız",
@@ -63,7 +64,185 @@
     "hasAccount": "Zaten hesabınız var mı?",
     "login": "Giriş yapın",
     "passwordMismatch": "Şifreler eşleşmiyor.",
-    "defaultError": "Kayıt başarısız. Lütfen tekrar deneyin."
+    "defaultError": "Kayıt başarısız. Lütfen tekrar deneyin.",
+    "backToHome": "Ana Sayfaya Dön"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "projects": "Projeler",
+    "settings": "Ayarlar",
+    "adminPanel": "Admin Panel"
+  },
+  "common": {
+    "newProject": "Yeni Proje",
+    "createProject": "Proje Oluştur",
+    "newTask": "Yeni Görev",
+    "cancel": "İptal",
+    "create": "Oluştur",
+    "creating": "Oluşturuluyor...",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "logout": "Çıkış yap",
+    "previous": "Önceki",
+    "next": "Sonraki",
+    "page": "Sayfa",
+    "noDescription": "Açıklama yok",
+    "comingSoon": "Yakında",
+    "roles": {
+      "Owner": "Sahip",
+      "Admin": "Yönetici",
+      "Member": "Üye",
+      "Viewer": "İzleyici"
+    },
+    "statuses": {
+      "Todo": "Yapılacak",
+      "InProgress": "Devam Ediyor",
+      "InReview": "İncelemede",
+      "Done": "Tamamlandı"
+    },
+    "priorities": {
+      "Low": "Düşük",
+      "Medium": "Orta",
+      "High": "Yüksek",
+      "Critical": "Kritik"
+    }
+  },
+  "dashboard": {
+    "welcome": "Hoş geldin, {name}!",
+    "welcomeFallback": "Kullanıcı",
+    "totalProjects": "Toplam Proje",
+    "recentProjects": "Son Projeler",
+    "allProjects": "Tüm Projeler →",
+    "noProjects": "Henüz proje yok",
+    "noProjectsHint": "İlk projenizi oluşturarak başlayın"
+  },
+  "projects": {
+    "title": "Projeler",
+    "noProjects": "Henüz proje yok",
+    "noProjectsHint": "İlk projenizi oluşturarak başlayın",
+    "loadError": "Projeler yüklenemedi",
+    "deleteConfirm": "Bu projeyi silmek istediğinize emin misiniz?",
+    "deleteSuccess": "Proje silindi",
+    "deleteError": "Proje silinemedi"
+  },
+  "projectDetail": {
+    "loadError": "Proje yüklenemedi",
+    "members": "Üyeler",
+    "invite": "Davet Et",
+    "projectMembers": "Proje Üyeleri",
+    "taskAdded": "Yeni görev eklendi",
+    "deleteTaskConfirm": "Bu görevi silmek istediğinize emin misiniz?",
+    "taskDeleteSuccess": "Görev silindi",
+    "taskDeleteError": "Görev silinemedi"
+  },
+  "taskDetail": {
+    "loadError": "Görev yüklenemedi",
+    "details": "Görev Detayları",
+    "description": "Açıklama",
+    "createdAt": "Oluşturulma"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "profileInfo": "Profil Bilgileri",
+    "fullName": "Ad Soyad",
+    "email": "E-posta",
+    "role": "Rol",
+    "themeMode": "Tema Modu",
+    "light": "Açık",
+    "dark": "Koyu",
+    "system": "Sistem",
+    "colorTheme": "Renk Teması",
+    "colorThemeNote": "Renk teması özelleştirmesi ileride CSS variables ile tam entegre edilecek"
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "panelTitle": "Admin Panel",
+    "backToDashboard": "Ana Sayfaya Dön",
+    "totalProjects": "Toplam Proje",
+    "usersLabel": "Kullanıcılar",
+    "tasksLabel": "Görevler",
+    "apiPending": "API bekleniyor",
+    "underDevelopment": "Admin panel geliştirme aşamasında",
+    "underDevelopmentNote": "Backend'e admin endpoint'leri eklendikçe bu panel zenginleşecek",
+    "usersPage": {
+      "title": "Kullanıcı Yönetimi",
+      "comingSoonNote": "Kullanıcı listeleme ve rol yönetimi için backend endpoint'leri gerekiyor"
+    },
+    "projectsPage": {
+      "title": "Tüm Projeler",
+      "comingSoonNote": "Tüm projeleri listeleme için admin endpoint'i gerekiyor"
+    },
+    "tasksPage": {
+      "title": "Tüm Görevler",
+      "comingSoonNote": "Tüm görevleri listeleme için admin endpoint'i gerekiyor"
+    }
+  },
+  "kanban": {
+    "noTasks": "Görev yok",
+    "statusUpdateError": "Görev durumu güncellenemedi"
+  },
+  "dialogs": {
+    "createProject": {
+      "title": "Yeni Proje",
+      "nameLabel": "Proje Adı",
+      "namePlaceholder": "Proje adını girin",
+      "descriptionLabel": "Açıklama",
+      "descriptionPlaceholder": "Proje açıklaması (opsiyonel)",
+      "success": "Proje oluşturuldu",
+      "error": "Proje oluşturulamadı."
+    },
+    "createTask": {
+      "title": "Yeni Görev",
+      "titleLabel": "Başlık",
+      "titlePlaceholder": "Görev başlığı",
+      "descriptionLabel": "Açıklama",
+      "descriptionPlaceholder": "Görev açıklaması (opsiyonel)",
+      "priorityLabel": "Öncelik",
+      "dueDateLabel": "Bitiş Tarihi",
+      "success": "Görev oluşturuldu",
+      "error": "Görev oluşturulamadı."
+    },
+    "inviteMember": {
+      "title": "Üye Davet Et",
+      "emailLabel": "E-posta Adresi",
+      "emailPlaceholder": "kullanici@email.com",
+      "roleLabel": "Rol",
+      "submit": "Davet Et",
+      "submitting": "Gönderiliyor...",
+      "success": "Davet gönderildi",
+      "error": "Davet gönderilemedi"
+    }
+  },
+  "comments": {
+    "title": "Yorumlar",
+    "placeholder": "Yorum yazın...",
+    "empty": "Henüz yorum yok. İlk yorumu siz yazın!",
+    "addError": "Yorum eklenemedi",
+    "deleteConfirm": "Bu yorumu silmek istediğinize emin misiniz?",
+    "deleteSuccess": "Yorum silindi",
+    "deleteError": "Yorum silinemedi"
+  },
+  "members": {
+    "loadError": "Üyeler yüklenemedi",
+    "removeConfirm": "Bu üyeyi projeden çıkarmak istediğinize emin misiniz?",
+    "removeSuccess": "Üye projeden çıkarıldı",
+    "removeError": "Üye çıkarılamadı",
+    "roleUpdateSuccess": "Rol güncellendi",
+    "roleUpdateError": "Rol güncellenemedi",
+    "makeAdmin": "Yönetici Yap",
+    "makeMember": "Üye Yap",
+    "makeViewer": "İzleyici Yap",
+    "remove": "Çıkar"
+  },
+  "invitations": {
+    "label": "Davetler",
+    "noPending": "Bekleyen davet yok",
+    "invitedBy": "{inviter} sizi {project} projesine davet etti",
+    "accept": "Kabul Et",
+    "reject": "Reddet",
+    "acceptSuccess": "Davet kabul edildi",
+    "rejectSuccess": "Davet reddedildi",
+    "error": "İşlem başarısız"
   },
   "errors": {
     "map": {

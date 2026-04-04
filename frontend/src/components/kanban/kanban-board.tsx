@@ -16,6 +16,7 @@ import { KanbanColumn } from "./kanban-column";
 import { KanbanCard } from "./kanban-card";
 import { tasksApi } from "@/lib/api";
 import { toast } from "sonner";
+import { useDictionary } from "@/providers/dictionary-provider";
 import type { TaskResponse } from "@/types";
 
 const STATUSES = ["Todo", "InProgress", "InReview", "Done"] as const;
@@ -41,6 +42,7 @@ export function KanbanBoard({
   onDeleteTask,
 }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<TaskResponse | null>(null);
+  const dict = useDictionary();
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
@@ -107,7 +109,7 @@ export function KanbanBoard({
     try {
       await tasksApi.updateStatus(task.id, { status: enumValue });
     } catch {
-      toast.error("Görev durumu güncellenemedi");
+      toast.error(dict.kanban.statusUpdateError);
       // Revert — parent should refetch
     }
   };

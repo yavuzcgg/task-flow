@@ -8,13 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Check, Monitor, Moon, Sun } from "lucide-react";
+import { useDictionary } from "@/providers/dictionary-provider";
 import { cn } from "@/lib/utils";
-
-const themeOptions = [
-  { value: "light", label: "Açık", icon: Sun },
-  { value: "dark", label: "Koyu", icon: Moon },
-  { value: "system", label: "Sistem", icon: Monitor },
-];
 
 const colorThemes = [
   { name: "Slate", value: "slate", color: "bg-slate-500" },
@@ -27,8 +22,15 @@ const colorThemes = [
 ];
 
 export default function SettingsPage() {
+  const dict = useDictionary();
   const { theme, setTheme } = useTheme();
   const user = useAuthStore((state) => state.user);
+  const themeOptions = [
+    { value: "light", label: dict.settings.light, icon: Sun },
+    { value: "dark", label: dict.settings.dark, icon: Moon },
+    { value: "system", label: dict.settings.system, icon: Monitor },
+  ];
+
   const [mounted, setMounted] = useState(false);
   const [colorTheme, setColorTheme] = useState("slate");
 
@@ -48,26 +50,26 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <h1 className="text-3xl font-bold">Ayarlar</h1>
+      <h1 className="text-3xl font-bold">{dict.settings.title}</h1>
 
       {/* Profile Info */}
       <Card>
         <CardHeader>
-          <CardTitle>Profil Bilgileri</CardTitle>
+          <CardTitle>{dict.settings.profileInfo}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-center justify-between">
-            <Label className="text-muted-foreground">Ad Soyad</Label>
+            <Label className="text-muted-foreground">{dict.settings.fullName}</Label>
             <span className="text-sm font-medium">{user?.fullName}</span>
           </div>
           <Separator />
           <div className="flex items-center justify-between">
-            <Label className="text-muted-foreground">E-posta</Label>
+            <Label className="text-muted-foreground">{dict.settings.email}</Label>
             <span className="text-sm font-medium">{user?.email}</span>
           </div>
           <Separator />
           <div className="flex items-center justify-between">
-            <Label className="text-muted-foreground">Rol</Label>
+            <Label className="text-muted-foreground">{dict.settings.role}</Label>
             <span className="text-sm font-medium">{user?.role}</span>
           </div>
         </CardContent>
@@ -76,7 +78,7 @@ export default function SettingsPage() {
       {/* Theme Mode */}
       <Card>
         <CardHeader>
-          <CardTitle>Tema Modu</CardTitle>
+          <CardTitle>{dict.settings.themeMode}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 gap-3">
@@ -98,7 +100,7 @@ export default function SettingsPage() {
       {/* Color Theme */}
       <Card>
         <CardHeader>
-          <CardTitle>Renk Teması</CardTitle>
+          <CardTitle>{dict.settings.colorTheme}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-4 gap-3 sm:grid-cols-7">
@@ -121,7 +123,7 @@ export default function SettingsPage() {
             ))}
           </div>
           <p className="mt-3 text-xs text-muted-foreground">
-            Renk teması özelleştirmesi ileride CSS variables ile tam entegre edilecek
+            {dict.settings.colorThemeNote}
           </p>
         </CardContent>
       </Card>

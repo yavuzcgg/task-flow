@@ -5,22 +5,24 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { LayoutDashboard, FolderKanban, Settings, ShieldCheck } from "lucide-react";
 import { useAuthStore } from "@/stores/auth-store";
-
-const navItems = [
-  { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { path: "/projects", label: "Projeler", icon: FolderKanban },
-  { path: "/settings", label: "Ayarlar", icon: Settings },
-];
-
-const adminItems = [
-  { path: "/admin", label: "Admin Panel", icon: ShieldCheck },
-];
+import { useDictionary } from "@/providers/dictionary-provider";
 
 export function Sidebar() {
   const pathname = usePathname();
   const user = useAuthStore((state) => state.user);
   const isAdmin = user?.role === "Admin";
   const lang = pathname.split("/")[1] || "tr";
+  const dict = useDictionary();
+
+  const navItems = [
+    { path: "/dashboard", label: dict.nav.dashboard, icon: LayoutDashboard },
+    { path: "/projects", label: dict.nav.projects, icon: FolderKanban },
+    { path: "/settings", label: dict.nav.settings, icon: Settings },
+  ];
+
+  const adminItems = [
+    { path: "/admin", label: dict.nav.adminPanel, icon: ShieldCheck },
+  ];
 
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r bg-card lg:block">
@@ -28,7 +30,7 @@ export function Sidebar() {
         {/* Logo */}
         <div className="flex h-16 items-center border-b px-6">
           <Link href={`/${lang}/dashboard`} className="text-xl font-bold">
-            TaskFlow
+            Task Flow
           </Link>
         </div>
 

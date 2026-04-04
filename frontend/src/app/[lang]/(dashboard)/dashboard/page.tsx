@@ -11,11 +11,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FolderKanban, Plus } from "lucide-react";
+import { useDictionary } from "@/providers/dictionary-provider";
 import type { ProjectResponse } from "@/types";
 
 export default function DashboardPage() {
   const pathname = usePathname();
   const lang = pathname.split("/")[1] || "tr";
+  const dict = useDictionary();
   const user = useAuthStore((state) => state.user);
   const [projects, setProjects] = useState<ProjectResponse[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -45,12 +47,12 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-3xl font-bold">Dashboard</h1>
           <p className="text-muted-foreground">
-            Hoş geldin, {user?.fullName || "Kullanıcı"}!
+            {dict.dashboard.welcome.replace("{name}", user?.fullName || dict.dashboard.welcomeFallback)}
           </p>
         </div>
         <Button onClick={() => setDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Yeni Proje
+          {dict.common.newProject}
         </Button>
       </div>
 
@@ -59,7 +61,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Toplam Proje
+              {dict.dashboard.totalProjects}
             </CardTitle>
             <FolderKanban className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -76,13 +78,13 @@ export default function DashboardPage() {
       {/* Recent Projects */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Son Projeler</h2>
+          <h2 className="text-xl font-semibold">{dict.dashboard.recentProjects}</h2>
           {projects.length > 0 && (
             <Link
               href={`/${lang}/projects`}
               className="text-sm text-primary hover:underline underline-offset-4"
             >
-              Tüm Projeler →
+              {dict.dashboard.allProjects}
             </Link>
           )}
         </div>
@@ -96,13 +98,13 @@ export default function DashboardPage() {
         ) : projects.length === 0 ? (
           <Card className="flex flex-col items-center justify-center py-12">
             <FolderKanban className="h-12 w-12 text-muted-foreground" />
-            <p className="mt-4 text-lg font-medium">Henüz proje yok</p>
+            <p className="mt-4 text-lg font-medium">{dict.dashboard.noProjects}</p>
             <p className="text-sm text-muted-foreground">
-              İlk projenizi oluşturarak başlayın
+              {dict.dashboard.noProjectsHint}
             </p>
             <Button className="mt-4" onClick={() => setDialogOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              Proje Oluştur
+              {dict.common.createProject}
             </Button>
           </Card>
         ) : (

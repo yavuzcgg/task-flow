@@ -14,6 +14,7 @@ import { membersApi } from "@/lib/api";
 import { toast } from "sonner";
 import { ProjectRole } from "@/types";
 import { AxiosError } from "axios";
+import { useDictionary } from "@/providers/dictionary-provider";
 import type { ErrorResponse } from "@/types";
 
 interface InviteMemberDialogProps {
@@ -22,12 +23,6 @@ interface InviteMemberDialogProps {
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
 }
-
-const roleOptions = [
-  { value: ProjectRole.Viewer, label: "İzleyici" },
-  { value: ProjectRole.Member, label: "Üye" },
-  { value: ProjectRole.Admin, label: "Yönetici" },
-];
 
 export function InviteMemberDialog({
   projectId,
@@ -39,6 +34,13 @@ export function InviteMemberDialog({
   const [role, setRole] = useState<ProjectRole>(ProjectRole.Member);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const dict = useDictionary();
+
+  const roleOptions = [
+    { value: ProjectRole.Viewer, label: dict.common.roles.Viewer },
+    { value: ProjectRole.Member, label: dict.common.roles.Member },
+    { value: ProjectRole.Admin, label: dict.common.roles.Admin },
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +49,7 @@ export function InviteMemberDialog({
 
     try {
       await membersApi.invite(projectId, { email, role });
-      toast.success("Davet gönderildi");
+      toast.success(dict.dialogs.inviteMember.success);
       setEmail("");
       setRole(ProjectRole.Member);
       onOpenChange(false);
@@ -55,7 +57,7 @@ export function InviteMemberDialog({
     } catch (err) {
       const axiosError = err as AxiosError<ErrorResponse>;
       setError(
-        axiosError.response?.data?.message || "Davet gönderilemedi"
+        axiosError.response?.data?.message || dict.dialogs.inviteMember.error
       );
     } finally {
       setLoading(false);
@@ -66,7 +68,7 @@ export function InviteMemberDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Üye Davet Et</DialogTitle>
+          <DialogTitle>{dict.dialogs.inviteMember.title}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
@@ -75,18 +77,18 @@ export function InviteMemberDialog({
             </div>
           )}
           <div className="space-y-2">
-            <Label htmlFor="email">E-posta Adresi</Label>
+            <Label htmlFor="email">{dict.dialogs.inviteMember.emailLabel}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="kullanici@email.com"
+              placeholder={dict.dialogs.inviteMember.emailPlaceholder}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="role">Rol</Label>
+            <Label htmlFor="role">{dict.dialogs.inviteMember.roleLabel}</Label>
             <select
               id="role"
               value={role}
@@ -106,10 +108,10 @@ export function InviteMemberDialog({
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
-              İptal
+              {dict.common.cancel}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Gönderiliyor..." : "Davet Et"}
+              {loading ? dict.dialogs.inviteMember.submitting : dict.dialogs.inviteMember.submit}
             </Button>
           </div>
         </form>

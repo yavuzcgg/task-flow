@@ -23,6 +23,12 @@ export function createConnection(): signalR.HubConnection {
 }
 
 export async function startConnection(): Promise<void> {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    console.warn("SignalR: No auth token, skipping connection.");
+    return;
+  }
+
   const conn = createConnection();
   if (conn.state === signalR.HubConnectionState.Disconnected) {
     try {

@@ -6,15 +6,9 @@ import { usePathname } from "next/navigation";
 import { AdminGuard } from "@/components/admin-guard";
 import { Navbar } from "@/components/layout/navbar";
 import { MobileSidebar } from "@/components/layout/mobile-sidebar";
+import { useDictionary } from "@/providers/dictionary-provider";
 import { cn } from "@/lib/utils";
 import { LayoutDashboard, Users, FolderKanban, ListTodo, ArrowLeft } from "lucide-react";
-
-const adminNavItems = [
-  { path: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { path: "/admin/users", label: "Kullanıcılar", icon: Users },
-  { path: "/admin/projects", label: "Projeler", icon: FolderKanban },
-  { path: "/admin/tasks", label: "Görevler", icon: ListTodo },
-];
 
 export default function AdminLayout({
   children,
@@ -24,6 +18,14 @@ export default function AdminLayout({
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const lang = pathname.split("/")[1] || "tr";
+  const dict = useDictionary();
+
+  const adminNavItems = [
+    { path: "/admin", label: dict.admin.title, icon: LayoutDashboard },
+    { path: "/admin/users", label: dict.admin.usersLabel, icon: Users },
+    { path: "/admin/projects", label: dict.nav.projects, icon: FolderKanban },
+    { path: "/admin/tasks", label: dict.admin.tasksLabel, icon: ListTodo },
+  ];
 
   return (
     <AdminGuard>
@@ -32,7 +34,7 @@ export default function AdminLayout({
         <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r bg-card lg:block">
           <div className="flex h-full flex-col">
             <div className="flex h-16 items-center border-b px-6">
-              <span className="text-xl font-bold">Admin Panel</span>
+              <span className="text-xl font-bold">{dict.admin.panelTitle}</span>
             </div>
             <nav className="flex-1 space-y-1 px-3 py-4">
               {adminNavItems.map((item) => {
@@ -63,7 +65,7 @@ export default function AdminLayout({
                 className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Ana Sayfaya Dön
+                {dict.admin.backToDashboard}
               </Link>
             </nav>
           </div>

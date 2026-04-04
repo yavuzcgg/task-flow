@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical, Pencil, Trash2, Users } from "lucide-react";
+import { useDictionary } from "@/providers/dictionary-provider";
 import type { ProjectResponse } from "@/types";
 
 interface ProjectCardProps {
@@ -29,8 +30,9 @@ interface ProjectCardProps {
 export function ProjectCard({ project, onEdit, onDelete }: ProjectCardProps) {
   const pathname = usePathname();
   const lang = pathname.split("/")[1] || "tr";
+  const dict = useDictionary();
 
-  const formattedDate = new Date(project.createdAt).toLocaleDateString("tr-TR", {
+  const formattedDate = new Date(project.createdAt).toLocaleDateString(lang === "en" ? "en-US" : "tr-TR", {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -58,7 +60,7 @@ export function ProjectCard({ project, onEdit, onDelete }: ProjectCardProps) {
               {onEdit && (
                 <DropdownMenuItem onClick={onEdit}>
                   <Pencil className="mr-2 h-4 w-4" />
-                  Düzenle
+                  {dict.common.edit}
                 </DropdownMenuItem>
               )}
               {onDelete && (
@@ -67,7 +69,7 @@ export function ProjectCard({ project, onEdit, onDelete }: ProjectCardProps) {
                   className="text-destructive focus:text-destructive"
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
-                  Sil
+                  {dict.common.delete}
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>
@@ -76,7 +78,7 @@ export function ProjectCard({ project, onEdit, onDelete }: ProjectCardProps) {
       </CardHeader>
       <CardContent className="flex-1">
         <p className="text-sm text-muted-foreground line-clamp-2">
-          {project.description || "Açıklama yok"}
+          {project.description || dict.common.noDescription}
         </p>
       </CardContent>
       <CardFooter className="flex items-center justify-between text-xs text-muted-foreground">
@@ -88,13 +90,7 @@ export function ProjectCard({ project, onEdit, onDelete }: ProjectCardProps) {
           </span>
           {project.userRole && (
             <Badge variant="outline">
-              {project.userRole === "Owner"
-                ? "Sahip"
-                : project.userRole === "Admin"
-                  ? "Yönetici"
-                  : project.userRole === "Member"
-                    ? "Üye"
-                    : "İzleyici"}
+              {dict.common.roles[project.userRole as keyof typeof dict.common.roles] || project.userRole}
             </Badge>
           )}
         </div>

@@ -8,9 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { FolderKanban, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { useDictionary } from "@/providers/dictionary-provider";
 import type { ProjectResponse } from "@/types";
 
 export default function ProjectsPage() {
+  const dict = useDictionary();
   const [projects, setProjects] = useState<ProjectResponse[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -27,7 +29,7 @@ export default function ProjectsPage() {
       setProjects(response.data.items);
       setTotalPages(response.data.totalPages);
     } catch {
-      toast.error("Projeler yüklenemedi");
+      toast.error(dict.projects.loadError);
     } finally {
       setLoading(false);
     }
@@ -38,14 +40,14 @@ export default function ProjectsPage() {
   }, [page, fetchProjects]);
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm("Bu projeyi silmek istediğinize emin misiniz?")) return;
+    if (!window.confirm(dict.projects.deleteConfirm)) return;
 
     try {
       await projectsApi.delete(id);
-      toast.success("Proje silindi");
+      toast.success(dict.projects.deleteSuccess);
       fetchProjects(page);
     } catch {
-      toast.error("Proje silinemedi");
+      toast.error(dict.projects.deleteError);
     }
   };
 
@@ -58,10 +60,10 @@ export default function ProjectsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Projeler</h1>
+        <h1 className="text-3xl font-bold">{dict.projects.title}</h1>
         <Button onClick={() => setDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Yeni Proje
+          {dict.common.newProject}
         </Button>
       </div>
 
@@ -75,13 +77,13 @@ export default function ProjectsPage() {
       ) : projects.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16">
           <FolderKanban className="h-16 w-16 text-muted-foreground" />
-          <h2 className="mt-4 text-xl font-semibold">Henüz proje yok</h2>
+          <h2 className="mt-4 text-xl font-semibold">{dict.projects.noProjects}</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            İlk projenizi oluşturarak başlayın
+            {dict.projects.noProjectsHint}
           </p>
           <Button className="mt-6" onClick={() => setDialogOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            Proje Oluştur
+            {dict.common.createProject}
           </Button>
         </div>
       ) : (
@@ -106,10 +108,10 @@ export default function ProjectsPage() {
                 disabled={page <= 1}
               >
                 <ChevronLeft className="mr-1 h-4 w-4" />
-                Önceki
+                {dict.common.previous}
               </Button>
               <span className="text-sm text-muted-foreground">
-                Sayfa {page} / {totalPages}
+                {`${dict.common.page} ${page} / ${totalPages}`}
               </span>
               <Button
                 variant="outline"
@@ -117,7 +119,7 @@ export default function ProjectsPage() {
                 onClick={() => setPage((p) => p + 1)}
                 disabled={page >= totalPages}
               >
-                Sonraki
+                {dict.common.next}
                 <ChevronRight className="ml-1 h-4 w-4" />
               </Button>
             </div>
